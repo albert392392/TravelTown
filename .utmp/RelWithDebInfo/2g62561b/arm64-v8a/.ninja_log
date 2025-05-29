@@ -1,0 +1,23 @@
+# ninja log v5
+3427	4606	7698625235028760	GameActivity/CMakeFiles/game.dir/UGASoftKeyboard.cpp.o	8268bc18b02567d
+0	4536	7698625199645242	GameActivity/CMakeFiles/game.dir/UGAConfiguration.cpp.o	d565c1d545cbb556
+2892	4546	7698625228486730	GameActivity/CMakeFiles/game.dir/UGAInputMotionEvent.cpp.o	ba260e201fe40473
+394	4541	7698625203316189	GameActivity/CMakeFiles/game.dir/UGADebug.cpp.o	a07930200a8f8745
+786	4542	7698625210303251	GameActivity/CMakeFiles/game.dir/UGAApplication.cpp.o	22a8aac66fd28f76
+4010	4618	7698625235116384	FramePacing/CMakeFiles/swappywrapper.dir/UnitySwappyWrapper.cpp.o	890e8e523ce7ea7a
+1280	4543	7698625213241976	GameActivity/CMakeFiles/game.dir/UGAInputKeyEvent.cpp.o	ff034827d1ddf473
+1814	4544	7698625217912047	GameActivity/CMakeFiles/game.dir/UGAEntry.cpp.o	f2e30924a9e072f5
+2343	4545	7698625224534218	GameActivity/CMakeFiles/game.dir/UGAInput.cpp.o	aaceb8f1bb70695
+4607	5900	7698625247942039	D:/TravelTown/TravelTown/Library/Bee/Android/Prj/IL2CPP/Gradle/unityLibrary/build/intermediates/cxx/RelWithDebInfo/2g62561b/obj/arm64-v8a/libgame.so	b304d530e0a9b602
+4618	5918	7698625248072137	D:/TravelTown/TravelTown/Library/Bee/Android/Prj/IL2CPP/Gradle/unityLibrary/build/intermediates/cxx/RelWithDebInfo/2g62561b/obj/arm64-v8a/libswappywrapper.so	e8068a19d65bf66f
+3	4937	7698644304021344	GameActivity/CMakeFiles/game.dir/UGAConfiguration.cpp.o	d565c1d545cbb556
+564	4938	7698644309188942	GameActivity/CMakeFiles/game.dir/UGAEntry.cpp.o	f2e30924a9e072f5
+1101	4939	7698644317036760	GameActivity/CMakeFiles/game.dir/UGAApplication.cpp.o	22a8aac66fd28f76
+1650	4940	7698644320450360	GameActivity/CMakeFiles/game.dir/UGADebug.cpp.o	a07930200a8f8745
+2170	4941	7698644327097770	GameActivity/CMakeFiles/game.dir/UGAInput.cpp.o	aaceb8f1bb70695
+2728	4943	7698644331161923	GameActivity/CMakeFiles/game.dir/UGAInputKeyEvent.cpp.o	ff034827d1ddf473
+3298	4944	7698644336908453	GameActivity/CMakeFiles/game.dir/UGAInputMotionEvent.cpp.o	ba260e201fe40473
+3856	4976	7698644342953226	GameActivity/CMakeFiles/game.dir/UGASoftKeyboard.cpp.o	8268bc18b02567d
+4396	5005	7698644343290884	FramePacing/CMakeFiles/swappywrapper.dir/UnitySwappyWrapper.cpp.o	890e8e523ce7ea7a
+4976	6196	7698644355147250	D:/TravelTown/TravelTown/Library/Bee/Android/Prj/IL2CPP/Gradle/unityLibrary/build/intermediates/cxx/RelWithDebInfo/2g62561b/obj/arm64-v8a/libgame.so	b304d530e0a9b602
+5005	6217	7698644355289984	D:/TravelTown/TravelTown/Library/Bee/Android/Prj/IL2CPP/Gradle/unityLibrary/build/intermediates/cxx/RelWithDebInfo/2g62561b/obj/arm64-v8a/libswappywrapper.so	e8068a19d65bf66f

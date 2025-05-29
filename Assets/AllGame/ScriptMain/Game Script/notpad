@@ -1,0 +1,149 @@
+using UnityEngine;
+using DG.Tweening;
+using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
+
+public class ObjectRotationHint : MonoBehaviour {
+    public List<string> targetObjectNames = new List<string>(); // لیست نام آبجکت‌های هدف
+    public float moveDistance = 1f;    // فاصله حرکت به سمت هدف
+    public float offsetX = 0.5f;       // مقدار افزایش در محور X
+    public float offsetY = 0.5f;       // مقدار افزایش در محور Y
+    public float offsetZ = 0.5f;       // مقدار افزایش در محور Z
+    public float rotationAngleX = 20f; // زاویه چرخش در محور X
+    public float rotationAngleY = 10f; // زاویه چرخش در محور Y
+    public float rotationAngleZ = 5f;  // زاویه چرخش در محور Z
+    public float duration = 0.5f;      // مدت زمان حرکت و بازگشت
+    public float waitTime = 5f;        // زمان انتظار قبل از شروع حرکت
+
+    public GameObject HelpFinger;
+    public SpriteMask spriteMask1;     // SpriteMask اول
+    public SpriteMask spriteMask2;     // SpriteMask دوم
+    private GameObject startObj;
+    private GameObject endObj;
+
+    private Vector3 startObjOriginalPosition;
+    private Vector3 endObjOriginalPosition;
+
+    void Start() {
+        StartCoroutine(StartMovement());
+    }
+
+    private IEnumerator StartMovement() {
+        while (true) {
+            // فقط برای MoveAndRotate از تأخیر استفاده می‌شود
+            yield return new WaitForSeconds(waitTime);
+
+            List<GameObject> targetObjects = new List<GameObject>();
+            foreach (string name in targetObjectNames) {
+                targetObjects.AddRange(GameObject.FindGameObjectsWithTag(name));
+            }
+
+            var groupedObjects = targetObjects.GroupBy(obj => obj.name)
+                                              .Where(group => group.Count() > 1)
+                                              .ToList();
+
+            if (groupedObjects.Count > 0) {
+                var randomGroup = groupedObjects[Random.Range(0, groupedObjects.Count)];
+                var objectsToAnimate = randomGroup.OrderBy(x => Random.value).Take(2).ToList();
+
+                if (objectsToAnimate.Count >= 2 && objectsToAnimate[0] != null && objectsToAnimate[1] != null) {
+                    startObj = objectsToAnimate[0];
+                    endObj = objectsToAnimate[1];
+
+                    // ذخیره موقعیت اصلی هر آبجکت
+                    startObjOriginalPosition = startObj.transform.position;
+                    endObjOriginalPosition = endObj.transform.position;
+
+                    // حرکت و چرخش بین دو آبجکت
+                    MoveAndRotate(startObj, endObj);
+
+                    // حرکت HelpFinger بدون تأخیر و مکس کردن
+                    MoveHelpFinger(startObj, endObj); // فراخوانی بدون تأخیر
+
+                    // تنظیم موقعیت SpriteMask ها
+                    SetSpriteMaskPosition(startObj, spriteMask1);
+                    SetSpriteMaskPosition(endObj, spriteMask2);
+                }
+                else {
+                    Debug.LogWarning("Not enough objects available for animation.");
+                }
+            }
+            else {
+                Debug.LogWarning("No valid groups found with matching names.");
+            }
+
+            // اضافه کردن زمان انتظار مجدد برای مراحل بعدی
+            yield return new WaitForSeconds(2); // یا هر زمان دیگری که لازم باشد
+        }
+    }
+
+    // حرکت و چرخش بین دو آبجکت
+    private void MoveAndRotate(GameObject obj1, GameObject obj2) {
+        Vector3 initialPosition1 = obj1.transform.position;
+        Vector3 initialPosition2 = obj2.transform.position;
+
+        Vector3 direction1 = (initialPosition2 - initialPosition1).normalized;
+        Vector3 direction2 = (initialPosition1 - initialPosition2).normalized;
+
+        Vector3 targetPosition1 = initialPosition1 + direction1 * moveDistance;
+        Vector3 targetPosition2 = initialPosition2 + direction2 * moveDistance;
+
+        int repeatCount = 2;
+
+        obj1.transform.DOMove(targetPosition1, duration)
+                      .SetLoops(repeatCount * 2, LoopType.Yoyo)
+                      .SetEase(Ease.InOutSine);
+
+        obj2.transform.DOMove(targetPosition2, duration)
+                      .SetLoops(repeatCount * 2, LoopType.Yoyo)
+                      .SetEase(Ease.InOutSine);
+    }
+
+    // حرکت HelpFinger بین دو ابجکت هم‌نام بدون تأخیر یا مکس کردن
+    private void MoveHelpFinger(GameObject startObj, GameObject endObj) {
+        if (startObj == null || endObj == null) return;
+
+        // توقف حرکت قبلی HelpFinger
+        HelpFinger.transform.DOKill();
+
+        // تنظیم موقعیت شروع
+        HelpFinger.transform.position = startObj.transform.position;
+
+        // شروع حرکت بدون تأخیر و مکس کردن
+        HelpFinger.transform.DOMove(endObj.transform.position, duration)
+            .SetEase(Ease.InOutSine)
+            .SetLoops(-1, LoopType.Yoyo); // حلقه بی‌نهایت بین دو نقطه
+    }
+
+    // تنظیم موقعیت SpriteMask ها
+    private void SetSpriteMaskPosition(GameObject obj, SpriteMask spriteMask) {
+        if (spriteMask != null && obj != null) {
+            Vector3 objectPosition = obj.transform.position;
+            // قرار دادن SpriteMask در وسط آبجکت
+            spriteMask.transform.position = new Vector3(objectPosition.x, objectPosition.y, objectPosition.z);
+        }
+    }
+
+    // تابع OnMouseDown برای متوقف کردن حرکت و بازگشت به موقعیت اصلی
+    private void OnMouseDown() {
+        string clickedObjectName = gameObject.name; // گرفتن نام آبجکت کلیک شده
+
+        // پیدا کردن همه آبجکت‌های هم‌نام از لیست targetObjectNames
+        List<GameObject> sameNamedObjects = new List<GameObject>();
+        foreach (string name in targetObjectNames) {
+            sameNamedObjects.AddRange(GameObject.FindGameObjectsWithTag(name)
+                                                .Where(obj => obj.name == clickedObjectName)
+                                                .ToList());
+        }
+
+        // توقف حرکت و بازگشت به موقعیت اصلی برای خود آبجکت و هم‌نام‌هایش
+        foreach (GameObject obj in sameNamedObjects) {
+            obj.transform.DOKill();  // متوقف کردن انیمیشن‌های در حال اجرا
+            if (obj == startObj)
+                obj.transform.position = startObjOriginalPosition; // بازگشت به موقعیت اصلی اولی
+            else if (obj == endObj)
+                obj.transform.position = endObjOriginalPosition;   // بازگشت به موقعیت اصلی دومی
+        }
+    }
+}

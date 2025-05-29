@@ -1,0 +1,180 @@
+DraggableObjectCustomizer
+
+using System.Collections;
+using UnityEngine;
+
+public class DraggableObjectCustomizer : MonoBehaviour {
+    [SerializeField] private float minScaleX = 0.05f;
+    [SerializeField] private float maxScaleX = 0.08f;
+    [SerializeField] private float minScaleY = 0.09f;
+    [SerializeField] private float maxScaleY = 0.14f;
+    [SerializeField] private float minY = -1f;
+    [SerializeField] private float maxY = 15f;
+    [SerializeField] private float minX = -360f;
+    [SerializeField] private float maxX = 360f;
+
+    private Camera mainCamera;
+    private Vector3 originalPosition;
+    private float originalScaleX;
+    private float originalScaleY;
+    private Vector3 mouseOffset;
+    private bool isDragging = false;
+    public bool onMouseDown = false;
+    public bool isResetting = false;
+
+    public Foot foot;
+    [SerializeField] private LayerMask groundLayer;
+    [SerializeField] private LayerMask CollisionLayer;
+
+    private Vector3 lastValidGroundPosition; // آخرین موقعیت معتبر روی لایه groundLayer
+    private void Start() {
+        mainCamera = Camera.main ?? throw new System.Exception("Main camera not found!");
+        UpdateOriginalState();
+    }
+    private void Update() {
+        if (isDragging && !isResetting) {
+            AdjustScaleBasedOnPosition();
+            LockZAxis();
+        }
+        UpdateOriginalState();
+    }
+    private void AdjustScaleBasedOnPosition() {
+        float scaleFactorY = Mathf.InverseLerp(minY, maxY, transform.position.y);
+        float newScaleX = Mathf.Lerp(maxScaleX, minScaleX, scaleFactorY);
+        float newScaleY = Mathf.Lerp(maxScaleY, minScaleY, scaleFactorY);
+        transform.localScale = new Vector3(newScaleX, newScaleY, 1f);
+    }
+
+    private void LockZAxis() {
+        this.gameObject.transform.position = new Vector3(transform.position.x, transform.position.y, 0f);
+    }
+    public IEnumerator ResetObjectState(float duration) {
+        isResetting = true; // Disable other updates
+
+        Vector3 startPosition = transform.position;
+        Vector3 startScale = transform.localScale;
+
+        float elapsedTime = 0f;
+
+        // Temporarily disable collisions with the CollisionLayer during reset
+        Collider objectCollider = GetComponent<Collider>();
+        if (objectCollider != null) {
+            objectCollider.enabled = false;
+        }
+
+        while (elapsedTime < duration) {
+            elapsedTime += Time.deltaTime;
+
+            transform.position = Vector3.Lerp(startPosition, originalPosition, elapsedTime / duration);
+            transform.localScale = Vector3.Lerp(startScale, new Vector3(originalScaleX, originalScaleY, 1f), elapsedTime / duration);
+
+            yield return null;
+        }
+
+        // Ensure the object lands on a valid ground layer position
+        if (Physics.Raycast(originalPosition + Vector3.up * 0.5f, Vector3.down, out RaycastHit hit, Mathf.Infinity, groundLayer)) {
+            transform.position = hit.point;
+            transform.localScale = new Vector3(originalScaleX, originalScaleY, 1f);
+            Debug.Log("Object returned to original position and scale on ground layer.");
+        }
+        else {
+            Debug.LogWarning("Original position is not valid on the ground layer, attempting adjustment.");
+
+            // Attempt to find a nearby valid position
+            Vector3 adjustment = new Vector3(0.5f, 0, 0); // Adjust position slightly to the side
+            for (int i = 0; i < 10; i++) {
+                Vector3 testPosition = originalPosition + adjustment * i;
+                if (Physics.Raycast(testPosition + Vector3.up * 0.5f, Vector3.down, out hit, Mathf.Infinity, groundLayer)) {
+                    transform.position = hit.point;
+                    transform.localScale = new Vector3(originalScaleX, originalScaleY, 1f);
+                    Debug.Log("Adjusted to a valid position on ground layer.");
+                    break;
+                }
+            }
+        }
+
+        // Re-enable the object's collider
+        if (objectCollider != null) {
+            objectCollider.enabled = true;
+        }
+
+        Debug.Log("Object state reset completed.");
+        isResetting = false; // Re-enable updates
+    }
+
+
+    public void UpdateOriginalState() {
+        // بررسی برخورد کامل با CollisionLayer
+        if (IsFootInsideCollisionLayer()) {
+            Debug.LogError("Foot is inside CollisionLayer, original state not updated.");
+            return; // جلوگیری از به‌روزرسانی وضعیت اصلی
+        }
+
+        // بررسی برخورد با لایه زمین
+        if (Physics.Raycast(transform.position, Vector3.down, out RaycastHit hit, Mathf.Infinity, groundLayer)) {
+            if (!foot.inthe) {
+                originalPosition = transform.position;
+                originalScaleX = transform.localScale.x;
+                originalScaleY = transform.localScale.y;
+                Debug.Log($"Updated original state: Position {originalPosition}, Scale (X: {originalScaleX}, Y: {originalScaleY})");
+            }
+        }
+        else {
+            Debug.Log("Object is not on the ground layer, original state not updated.");
+        }
+    }
+
+    private bool IsFootInsideCollisionLayer() {
+        // بررسی اینکه آیا کولایدر Foot با CollisionLayer برخورد دارد
+        Collider footCollider = foot.GetComponent<Collider>();
+        if (footCollider == null) {
+            Debug.LogError("Foot does not have a Collider component!");
+            return false;
+        }
+
+        Collider[] colliders = Physics.OverlapBox(
+            footCollider.bounds.center,
+            footCollider.bounds.extents,
+            Quaternion.identity,
+            CollisionLayer
+        );
+
+        // اگر هیچ کولایدری از لایه CollisionLayer نباشد، خروجی false است
+        return colliders.Length > 0;
+    }
+
+    public void SetSpriteTransparency(GameObject obj, float alpha) {
+        SpriteRenderer sprite = obj.GetComponent<SpriteRenderer>();
+        if (sprite != null) {
+            Color color = sprite.color;
+            color.a = alpha / 255f; // Normalize alpha to 0-1 range
+            sprite.color = color;
+        }
+    }
+
+    private void OnMouseDrag() {
+        if (!isDragging) return;
+
+        Vector3 newPos = GetMouseWorldPos() + mouseOffset;
+        float clampedX = Mathf.Clamp(newPos.x, minX, maxX);
+        this.gameObject.transform.position = new Vector3(clampedX, newPos.y, 0f);
+    }
+
+    private void OnMouseDown() {
+        isDragging = true;
+        onMouseDown = true;
+        mouseOffset = transform.position - GetMouseWorldPos();
+    }
+
+    private void OnMouseUp() {
+        isDragging = false;
+        onMouseDown = false;
+    }
+
+    private Vector3 GetMouseWorldPos() {
+        Vector3 mousePoint = Input.mousePosition;
+        mousePoint.z = mainCamera.WorldToScreenPoint(transform.position).z;
+        return mainCamera.ScreenToWorldPoint(mousePoint);
+    }
+}
+

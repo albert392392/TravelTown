@@ -1,0 +1,23 @@
+مدرس: پژمان نیکروان
+اینستاگرام: instagram.com/pejman_nikravan
+کانال تلگرام: @CafeToseeh
+وبسایت: www.cafetoseeh.ir
+
+--------------------------------------------------
+
+لینک دانلود ابزار bundlesigner بازار:
+• https://github.com/cafebazaar/bundle-signer/releases
+از قسمت assets
+فایل jar رو دانلود کنید
+
+توضیحات بیشتر توسط بازار:
+• https://developers.cafebazaar.ir/fa/guidelines/feature/app_bundle#
+• https://github.com/cafebazaar/bundle-signer
+
+فیلم توضیحات کافه بازار، حتما ببینید:
+https://www.aparat.com/v/qMO7C
+
+دستوری که در cmd وارد کردیم:
+java -jar bundlesigner-0.1.13.jar genbin  --bundle app.aab --bin . --v2-signing-enabled true --v3-signing-enabled false --ks key.keystore
+
+bomb123456

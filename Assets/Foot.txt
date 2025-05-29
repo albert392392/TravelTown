@@ -1,0 +1,94 @@
+Foot
+
+using System.Collections;
+using UnityEngine;
+
+public class Foot : MonoBehaviour {
+    [SerializeField] private DraggableObjectCustomizer parentScript;
+    [SerializeField] private float detectionRadius = 1f;
+    [SerializeField] private LayerMask collisionLayer;
+
+    public bool inthe = false;
+    private void Start() {
+        if (parentScript == null) {
+            parentScript = GetComponentInParent<DraggableObjectCustomizer>();
+            if (parentScript == null) {
+                Debug.LogError("Parent script (DraggableObjectCustomizer) not found!");
+            }
+        }
+    }
+
+    private void Update() {
+        bool isColliding = Physics.CheckSphere(transform.position, detectionRadius, collisionLayer);
+
+        if (isColliding && !inthe) {
+            HandleEnterCollision();
+        }
+        else if (!isColliding && inthe) {
+            HandleExitCollision();
+        }
+
+        if (inthe && !parentScript.onMouseDown) {
+            Debug.Log("Mouse released inside Collision. Starting ResetObjectState Coroutine...");
+            if (!parentScript.isResetting) { // Prevent multiple coroutine calls
+                StartCoroutine(parentScript.ResetObjectState(0.7f));
+            }
+        }
+    }
+
+    private void HandleEnterCollision() {
+        inthe = true;
+        Debug.Log("Collision detected: Enter");
+
+        parentScript?.SetSpriteTransparency(gameObject, 140f);
+    }
+
+    private void HandleExitCollision() {
+        inthe = false; // وضعیت خارج شدن
+        Debug.Log("Collision detected: Exit");
+
+        // بازگرداندن شفافیت
+        parentScript?.SetSpriteTransparency(gameObject, 255f);
+    }
+
+    private void OnDrawGizmosSelected() {
+        // رسم شعاع برای مشاهده محدوده بررسی
+        Gizmos.color = Color.green;
+        Gizmos.DrawWireSphere(transform.position, detectionRadius);
+    }
+
+    private bool IsFullyContained3DFlat(Bounds innerBounds, Bounds outerBounds) {
+        Vector3[] corners = new Vector3[4];
+        corners[0] = new Vector3(innerBounds.min.x, innerBounds.min.y, 0); // پایین چپ
+        corners[1] = new Vector3(innerBounds.max.x, innerBounds.min.y, 0); // پایین راست
+        corners[2] = new Vector3(innerBounds.max.x, innerBounds.max.y, 0); // بالا راست
+        corners[3] = new Vector3(innerBounds.min.x, innerBounds.max.y, 0); // بالا چپ
+
+        foreach (Vector3 corner in corners) {
+            if (!outerBounds.Contains(corner)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private void OnTriggerEnter(Collider other) {
+        if (other.CompareTag("Collision")) {
+            Debug.Log("Collision detected: Enter (Trigger)");
+            inthe = true;
+            if (parentScript != null) {
+                parentScript.SetSpriteTransparency(other.gameObject, 140f);
+            }
+        }
+    }
+
+    private void OnTriggerExit(Collider other) {
+        if (other.CompareTag("Collision")) {
+            Debug.Log("Collision detected: Exit (Trigger)");
+            inthe = false;
+            if (parentScript != null) {
+                parentScript.SetSpriteTransparency(other.gameObject, 255f);
+            }
+        }
+    }
+}

@@ -1,0 +1,301 @@
+ObjectRotationHint
+
+
+
+using UnityEngine;
+using DG.Tweening;
+using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
+using TMPro;
+using Unity.VisualScripting;
+
+public class ObjectRotationHint : MonoBehaviour {
+    public float moveDistance = 1f;
+    public float offsetX = 0.5f;
+    public float offsetY = 0.5f;
+    public float offsetZ = 0.5f;
+    public float duration = 2f;
+    public float waitTime = 3f;
+
+    public GameObject HelpFinger;
+    public SpriteMask spriteMask1;
+    public SpriteMask spriteMask2;
+    public GameObject squareSprite;
+    [SerializeField] private List<ObjectInformations> objectInformations;
+    [SerializeField] private List<GameObject> allObjectMerge = new List<GameObject>();
+
+    private GameObject startObj;
+    private GameObject endObj;
+    private GameObject singleObj;
+    [SerializeField] private GridManager gridManager;
+    [SerializeField] private List<Transform> _targetPositions = new List<Transform>();
+    [SerializeField] private List<GameObject> _spriders_targetPositions = new List<GameObject>();
+    [SerializeField] private List<GameObject> _gameObjects_targetPositions = new List<GameObject>();
+
+    public bool startTargetPosition;
+    // Dictionary to track animating objects
+    private Dictionary<GameObject, bool> animatingObjects = new Dictionary<GameObject, bool>();
+    private void Start() {
+        StartCoroutine(HelpFingerMovement());
+        startTargetPosition = true;
+    }
+    private void updateTargetPositions() {
+        if (startTargetPosition) {
+            // پاک کردن مقادیر قبلی برای جلوگیری از داده‌های تکراری
+            _targetPositions.Clear();
+            _spriders_targetPositions.Clear();
+            _gameObjects_targetPositions.Clear();
+
+            foreach (var target in gridManager.targetPositions) {
+                if (!_targetPositions.Contains(target)) {
+                    _targetPositions.Add(target);
+                }
+
+                var spider = target.GetComponentInChildren<SpiderScript>();
+                if (spider != null && !_spriders_targetPositions.Contains(spider.gameObject)) {
+                    _spriders_targetPositions.Add(spider.gameObject);
+                }
+
+                var scatter = target.GetComponentInChildren<ScatterObjectsWithInterval>();
+                var merge = target.GetComponentInChildren<ObjectMerge>();
+
+                if ((scatter != null) && !_gameObjects_targetPositions.Contains(scatter.gameObject)) {
+                    _gameObjects_targetPositions.Add(scatter.gameObject);
+                }
+                else if ((merge != null) && !_gameObjects_targetPositions.Contains(merge.gameObject)) {
+                    _gameObjects_targetPositions.Add(merge.gameObject);
+                }
+            }
+        }
+
+        startTargetPosition = false; // یک‌بار مقداردهی انجام شود
+    }
+
+    private void Update() {
+        CleanupAnimatedObjects(); // Remove references to destroyed objects
+        UpdateObjectList();
+
+        updateTargetPositions();
+        // Process ObjectInformations without removing at the start
+        List<int> indicesToRemove = new List<int>();
+
+        for (int i = 0; i < objectInformations.Count; i++) {
+            ProcessObjectInformation(objectInformations[i]);
+
+            // Mark the entry for removal after processing is complete
+            if (IsTaskComplete(objectInformations[i])) {
+                Debug.Log($"Marking ObjectInformations entry at index {i} for removal");
+                indicesToRemove.Add(i);
+            }
+        }
+        for (int i = indicesToRemove.Count - 1; i >= 0; i--) {
+            int index = indicesToRemove[i];
+            Debug.Log($"Removing completed ObjectInformations entry at index {index}");
+            objectInformations.RemoveAt(index);
+        }
+
+
+        // Remove marked entries after processing
+
+        // Check if all ObjectInformations are processed
+        CheckCurrentTaskCompletion();
+    }
+
+    private bool IsTaskComplete(ObjectInformations info) {
+        // Check if the current ObjectInformations entry is completed
+        return info.foundObjects.Count == 0;
+    }
+  
+    private void CleanupAnimatedObjects() {
+        var keysToRemove = animatingObjects.Keys.Where(obj => obj == null).ToList();
+        foreach (var key in keysToRemove) {
+            animatingObjects.Remove(key);
+        }
+    }
+
+    private void UpdateObjectList() {
+        var objectsWithMerge = FindObjectsOfType<ObjectMerge>();
+        var objectsWithScatter = FindObjectsOfType<ScatterObjectsWithInterval>();
+        allObjectMerge.Clear();
+
+        allObjectMerge.AddRange(objectsWithMerge.Select(o => o.gameObject));
+        foreach (var scatterObj in objectsWithScatter) {
+            if (!allObjectMerge.Contains(scatterObj.gameObject)) {
+                allObjectMerge.Add(scatterObj.gameObject);
+            }
+        }
+
+        foreach (var obj in allObjectMerge) {
+            var textMeshPro = obj.transform.GetChild(0).GetComponent<TextMeshPro>();
+            var spriteRenderer = obj.GetComponent<SpriteRenderer>();
+
+            if (spriteRenderer != null) {
+                int index = objectInformations.FindIndex(info =>
+                    info.color == spriteRenderer.color &&
+                    info.number == textMeshPro.text &&
+                    info.sprite == spriteRenderer.sprite);
+
+                if (index > -1) {
+                    if (!objectInformations[index].foundObjects.Contains(obj)) {
+                        objectInformations[index].foundObjects.Add(obj);
+                        Debug.Log($"GameObject: {obj.name} matches criteria.");
+                    }
+                }
+            }
+        }
+        foreach (var info in objectInformations) {
+            info.foundObjects.RemoveAll(obj =>
+                obj == null ||
+                (obj.GetComponent<ObjectMerge>() == null && obj.GetComponent<ScatterObjectsWithInterval>() == null));
+        }
+    }
+
+    private void ProcessObjectInformation(ObjectInformations info) {
+        // حذف آبجکت‌های نامعتبر
+        info.foundObjects.RemoveAll(obj => obj == null || (obj.GetComponent<ObjectMerge>() == null && obj.GetComponent<ScatterObjectsWithInterval>() == null));
+
+        if (info.foundObjects.Count >= 2) {
+            // نزدیک‌ترین آبجکت به ارایه صفرم allObjectMerge به عنوان startObj
+            var referenceObj = allObjectMerge.FirstOrDefault(); // ارایه صفرم
+            if (referenceObj != null) {
+                startObj = info.foundObjects
+                    .OrderBy(obj => Vector3.Distance(referenceObj.transform.position, obj.transform.position))
+                    .FirstOrDefault();
+                startObj.GetComponent<Collider>().enabled = true;
+            }
+
+            // دورترین آبجکت از startObj به عنوان endObj
+            if (startObj != null) {
+                endObj = info.foundObjects
+                    .Where(obj => obj != startObj) // حذف startObj
+                    .OrderByDescending(obj => Vector3.Distance(startObj.transform.position, obj.transform.position))
+                    .FirstOrDefault();
+                endObj.GetComponent<Collider>().enabled = true;
+            }
+
+            if (startObj == null || endObj == null) {
+                info.foundObjects.Remove(startObj);
+                info.foundObjects.Remove(endObj);
+                return;
+            }
+            spriteMask1.enabled = true;
+            // تنظیم موقعیت ماسک‌ها
+            SetSpriteMaskPosition(startObj.transform.parent.parent.gameObject, spriteMask1);
+            spriteMask2.enabled = true;
+            SetSpriteMaskPosition(endObj.transform.parent.parent.gameObject, spriteMask2);
+
+            // بررسی برای ادغام
+            CheckMerge(info, startObj, endObj);
+        }
+        if (info.foundObjects.Count == 1) {
+            singleObj = info.foundObjects[0];
+            singleObj.GetComponent<Collider>().enabled = true;
+            var scatterScript = singleObj?.GetComponent<ScatterObjectsWithInterval>();
+            if (scatterScript != null) {
+                AnimateSingleObject(singleObj);
+                CheckClick(info, singleObj);
+            }
+        }
+    }
+    private IEnumerator HelpFingerMovement() {
+        while (true) {
+            if (startObj != null && endObj != null) {
+                MoveHelpFinger(startObj, endObj);
+                yield return new WaitForSeconds(duration);
+            }
+            yield return null;
+        }
+    }
+
+    public void CheckMerge(ObjectInformations info, GameObject startObj, GameObject endObj) {
+        startTargetPosition = true;
+        if (startObj == null || endObj == null) {
+            Debug.LogWarning("One of the objects to merge has already been destroyed.");
+            info.foundObjects.Remove(startObj);
+            info.foundObjects.Remove(endObj);
+            return;
+        }
+        var startMergeScript = startObj.GetComponent<ObjectMerge>();
+        var endMergeScript = endObj.GetComponent<ObjectMerge>();
+
+        if (startMergeScript != null && endMergeScript != null &&
+            startMergeScript.Merged && endMergeScript.Merged) {
+            Debug.Log($"Merging {startObj.name} and {endObj.name}");
+
+            info.foundObjects.Remove(startObj);
+            info.foundObjects.Remove(endObj);
+
+            Destroy(startObj);
+            Destroy(endObj);
+        }
+    }
+    public void CheckClick(ObjectInformations info, GameObject singleObj) {
+        var scatterScript = singleObj.GetComponent<ScatterObjectsWithInterval>();
+        startTargetPosition = true;
+        if (scatterScript != null && scatterScript.Spawn) {
+            Debug.Log($"Removing clicked object: {singleObj.name}");
+            Destroy(singleObj);
+            info.foundObjects.Remove(singleObj);
+        }
+    }
+    private void MoveHelpFinger(GameObject startObj, GameObject endObj) {
+        if (startObj == null || endObj == null) return;
+
+        HelpFinger.transform.DOKill();
+        HelpFinger.transform.position = startObj.transform.parent.position;
+
+        HelpFinger.transform.DOMove(endObj.transform.parent.position, duration)
+            .SetEase(Ease.InOutSine)
+            .SetLoops(-1, LoopType.Yoyo);
+    }
+    private void SetSpriteMaskPosition(GameObject obj, SpriteMask spriteMask) {
+        if (spriteMask != null && obj != null) {
+            spriteMask.transform.position = obj.transform.position;
+        }
+    }
+    private void CheckCurrentTaskCompletion() {
+        if (objectInformations.Count == 0) {
+            Destroy(HelpFinger);
+            Destroy(squareSprite);
+        }
+    }
+
+    private void AnimateSingleObject(GameObject obj) {
+        if (obj == null) return;
+
+        if (animatingObjects.ContainsKey(obj) && animatingObjects[obj]) return;
+
+        animatingObjects[obj] = true;
+
+        HelpFinger.transform.DOKill();
+        HelpFinger.transform.position = obj.transform.parent.position;
+
+        HelpFinger.transform.DOPunchScale(Vector3.one * 0.2f, duration, 1, 1)
+            .OnComplete(() => {
+                HelpFinger.transform.position = obj.transform.position;
+                animatingObjects[obj] = false;
+            });
+
+        spriteMask1.enabled = true;
+        spriteMask1.transform.position = obj.transform.parent.parent.position;
+        spriteMask2.enabled = false;
+    }
+
+    private ObjectInformations GetObjectInformation(GameObject obj) {
+        foreach (var info in objectInformations) {
+            if (info.foundObjects.Contains(obj)) {
+                return info;
+            }
+        }
+        return null;
+    }
+
+    [System.Serializable]
+    public class ObjectInformations {
+        public List<GameObject> foundObjects = new List<GameObject>();
+        public Sprite sprite;
+        public Color color;
+        public string number;
+    }
+}

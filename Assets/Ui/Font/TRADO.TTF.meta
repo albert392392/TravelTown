@@ -1,0 +1,22 @@
+fileFormatVersion: 2
+guid: 3e5284b8f5fe2b448aa3eef989f9d718
+TrueTypeFontImporter:
+  externalObjects: {}
+  serializedVersion: 4
+  fontSize: 16
+  forceTextureCase: -2
+  characterSpacing: 0
+  characterPadding: 1
+  includeFontData: 1
+  fontNames:
+  - Traditional Arabic
+  fallbackFontReferences:
+  - {fileID: 12800000, guid: 22ed0aa6358b6054cb819fab60e8d3d3, type: 3}
+  customCharacters: 
+  fontRenderingMode: 0
+  ascentCalculationMode: 1
+  useLegacyBoundsCalculation: 0
+  shouldRoundAdvanceValue: 1
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
