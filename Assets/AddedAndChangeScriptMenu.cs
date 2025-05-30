@@ -44,6 +44,8 @@ public class AddedAndChangeScriptMenu : MonoBehaviour {
     private DraggableObjectCustomizer draggableObjectCustomizer = null;
     public List<ObjectMenuAdderClick> objectMenuAdderClick;
     [SerializeField] private List<ObjectMenuItem> objectMenuItem;
+
+    public bool isDraggingFromCustomizer = false;
     /*
     private void Awake() {
         objectMenuScrollBarChoose = FindAnyObjectByType<ObjectMenuScrollBarChoose>();
@@ -181,6 +183,9 @@ public class AddedAndChangeScriptMenu : MonoBehaviour {
     }
 
     private void HandleTouchDrag() {
+
+        if (isDraggingFromCustomizer) return;
+
         if (Input.touchCount == 0)
             return;
         Touch touch = Input.GetTouch(0);

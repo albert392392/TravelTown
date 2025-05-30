@@ -47,8 +47,8 @@ public class GridManager : MonoBehaviour {
     public GameObject tilePrefab;
     [SerializeField] private Sprite sprite1;
     [SerializeField] private Sprite sprite2;
-    [SerializeField] private int gridWidth = 5;
-    [SerializeField] private int gridHeight = 5;
+    public int gridWidth = 5;
+    public int gridHeight = 5;
     [SerializeField] private float tileSize = 1.0f;
     [SerializeField] private GameObject[,] tiles;
     public List<Transform> targetPositions;

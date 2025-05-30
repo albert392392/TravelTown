@@ -19,6 +19,7 @@ public class DraggableObjectCustomizer : MonoBehaviour {
     public bool isDragging = false;
     private Camera mainCamera;
     private Vector3 velocity = Vector3.zero;
+    
 
     private GameObject choosePanel4;
     private float scaleFactorY;
@@ -31,6 +32,8 @@ public class DraggableObjectCustomizer : MonoBehaviour {
     [SerializeField] private string PositionAndScaleSaveKey;
     private Vector3 targetPosition;
     private bool hasScaled = false;
+
+
     public void Awake() {
         mainCamera = Camera.main;
     }
@@ -75,15 +78,18 @@ public class DraggableObjectCustomizer : MonoBehaviour {
         if (IsTouchingCharacter(wordPos)) {
             isDragging = true;
             offset = (Vector2)transform.position - wordPos;
+
             choosePanel4 = GameObject.FindGameObjectWithTag("choosePanel4");
             if (choosePanel4 != null) {
                 choosePanel4.SetActive(true);
             }
+            GetComponent<AddedAndChangeScriptMenu>().isDraggingFromCustomizer = false;
         }
     }
     private void OnTouchMove(Vector3 position) {
         choosePanel4 = GameObject.FindGameObjectWithTag("choosePanel4");
         if (isDragging) {
+            GetComponent<AddedAndChangeScriptMenu>().isDraggingFromCustomizer = true;
             Vector2 wordPos = Camera.main.ScreenToWorldPoint(position);
             Vector2 targetPos = wordPos + offset;
             targetPosition = new Vector3(
@@ -98,12 +104,15 @@ public class DraggableObjectCustomizer : MonoBehaviour {
     }
     private void OnTouchEnd(Touch touch) {
         isDragging = false;
+        GetComponent<AddedAndChangeScriptMenu>().isDraggingFromCustomizer = false;
     }
     private bool IsTouchingCharacter(Vector3 position) {
         Collider2D[] hitColliders = Physics2D.OverlapPointAll(position);
         foreach (var hit in hitColliders) {
-            if (hit.transform == transform)
+            if (hit.transform == transform) {
+                GetComponent<AddedAndChangeScriptMenu>().isDraggingFromCustomizer = true;
                 return true;
+            }
         }
         return false;
     }

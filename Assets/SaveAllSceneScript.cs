@@ -8,7 +8,7 @@ public class SaveAllSceneScript : MonoBehaviour {
 
     }
     public void SaveMainGameScene() {
-        UIManager.Instance.SaveWaveCustomer();
+        //UIManager.Instance.SaveWaveCustomer();
         GridManager.Instance.SaveTargetPositions();
     }
     public void SaveMosqueScene() {

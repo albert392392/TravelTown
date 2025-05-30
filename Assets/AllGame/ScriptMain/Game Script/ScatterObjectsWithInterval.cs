@@ -69,8 +69,9 @@ public class ScatterObjectsWithInterval : MergeableBase {
             }
             nextUpdateTime = Time.time + updateInterval;
         }
-        if (mergedObject != null) {
-            CheckForTargetsAndDestroy(mergedObject.transform);
+
+        if (Merged) {
+            CheckForTargetsAndDestroy(transform);
         }
     }
 
@@ -145,7 +146,7 @@ public class ScatterObjectsWithInterval : MergeableBase {
             Vector3 touchWorldPos = Camera.main.ScreenToWorldPoint(new Vector3(position.x, position.y, zDist));
             touchWorldPos.z = transform.position.z;
 
-            transform.position = Vector3.Lerp(transform.position, touchWorldPos, Time.deltaTime * 15f);
+            transform.position = Vector3.Lerp(transform.position, touchWorldPos, Time.deltaTime * 20f);
         }
 
     }

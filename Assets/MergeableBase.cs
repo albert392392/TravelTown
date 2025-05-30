@@ -35,13 +35,15 @@ public abstract class MergeableBase : MonoBehaviour
     protected Collider objectCollider;
     public static List<GameObject> objectsList = new List<GameObject>();
     private readonly Queue<Collider> colliderQueue = new Queue<Collider>();
-    [SerializeField] private float detectionRadius = 11f;
+    [SerializeField] private float detectionRadius = 10f;
     public MergeableState CurrentState { get; private set; } = MergeableState.Idle;
     public bool IsBusy => CurrentState != MergeableState.Idle;
 
     public MergeableBase lastEnteredBy = null;
 
     public GameObject otherGameObjectToswap = null;
+
+    public bool Merged = false;
     protected virtual void Awake()
     {
         var mover = GetComponent<ObjectMover>();
@@ -281,7 +283,7 @@ public abstract class MergeableBase : MonoBehaviour
 
         // Instantiate merged object
         mergedObject = Instantiate(mergedPrefab, mergePosition, Quaternion.identity, mergeParent);
-
+        mergedObject.GetComponent<MergeableBase>().Merged = true;
         // Register merged object with customer script if available
         CustomerScript?.objectMerged.Add(mergedObject.GetComponent<MergeableBase>());
 
@@ -337,24 +339,51 @@ public abstract class MergeableBase : MonoBehaviour
         //SetState(MergeableState.Idle);
     }
 
-    public void CheckForTargetsAndDestroy(Transform MainTransform)
+    public void CheckForTargetsAndDestroy(Transform mainTargetPosition)
     {
-        // Use Vector3 for directions to support 3D raycasting
+        if (GridManager.Instance == null || mainTargetPosition == null)
+            return;
+
+        // Find the 4 adjacent target positions (left, right, up, down) in GridManager.Instance.targetPositions
+        List<Transform> adjacentTargets = new List<Transform>();
         Vector3[] directions = { Vector3.left, Vector3.right, Vector3.up, Vector3.down };
+        float minDistance = GridManager.Instance.GridCellSize * 0.5f; // Use half cell size as threshold
+
         foreach (Vector3 dir in directions)
         {
-            // RaycastHit is a struct, so we can reuse a single variable
-            RaycastHit hit;
-            // Use LayerMask to only hit "Box" objects if possible (optional, for optimization)
-            if (Physics.Raycast(MainTransform.parent.parent.position, dir, out hit, detectionRadius))
+            Vector3 neighborPos = mainTargetPosition.position + dir * GridManager.Instance.GridCellSize;
+            // Find the closest target position to the neighborPos
+            Transform closest = null;
+            float closestDist = float.MaxValue;
+            foreach (var t in GridManager.Instance.targetPositions)
             {
-                // Use CompareTag for performance and null safety
-                if (hit.collider != null && hit.collider.CompareTag("Box"))
+                float dist = Vector3.Distance(t.position, neighborPos);
+                if (dist < minDistance && dist < closestDist)
                 {
-                    Destroy(hit.collider.gameObject);
+                    closest = t;
+                    closestDist = dist;
                 }
             }
+            if (closest != null)
+                adjacentTargets.Add(closest);
         }
+
+        // For each adjacent target, if it has a child with tag "Box", destroy it
+        foreach (var target in adjacentTargets)
+        {
+            List<GameObject> boxesToDestroy = new List<GameObject>();
+            foreach (Transform child in target)
+            {
+                if (child.CompareTag("Box"))
+                    boxesToDestroy.Add(child.gameObject);
+            }
+            foreach (var box in boxesToDestroy)
+            {
+                Destroy(box);
+            }
+        }
+
+        Merged = false;
     }
 
     public bool IsSimilarTo(GameObject other)
