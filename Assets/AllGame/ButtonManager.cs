@@ -72,8 +72,8 @@ public class ButtonManager : MonoBehaviour {
         }
     }
     private void InitializeButtons() {
-       // buttons.BackFromPanelButton.onClick.AddListener(OnBackButtonClicked);
-       // buttons.LocationButton.onClick.AddListener(OnLocationButton);
+        buttons.BackFromPanelButton.onClick.AddListener(OnBackButtonClicked);
+        buttons.LocationButton.onClick.AddListener(OnLocationButton);
        // buttons.SessionButton.onClick.AddListener(OnSessionButton);
     }
 

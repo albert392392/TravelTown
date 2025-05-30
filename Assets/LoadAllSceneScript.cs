@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.UI;
+using static ButtonManager;
 public class LoadAllSceneScript : MonoBehaviour {
     private Button button;
     private void Start() {
@@ -10,8 +11,11 @@ public class LoadAllSceneScript : MonoBehaviour {
         GridManager.Instance.LoadTargetPositions();
     }
     public void LoadForMosqueScene() {
-        ButtonManager.instance.gamePlay.EnsureAtLeastOneLevelActive();
-        ButtonManager.instance.gamePlay.LoadAndActivateLastLevel();
+        if (ButtonManager.instance.gamePlay != null) {
+            ButtonManager.instance.gamePlay.RefreshSessions();
+            ButtonManager.instance.gamePlay.EnsureAtLeastOneLevelActive();
+            ButtonManager.instance.gamePlay.LoadAndActivateLastLevel();
+        }
         PlayerCharacter.Instance.LoadPositionAndScale();
         DraggableObjectCustomizer.instance.LoadPositionAndScale();
         TaskCreator.Instance.LoadTaskCount();
