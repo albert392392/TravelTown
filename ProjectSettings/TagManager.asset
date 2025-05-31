@@ -16,6 +16,7 @@ TagManager:
   - opaqueMango
   - TargetPosition
   - choosePanel4
+  - inventory
   layers:
   - Default
   - TransparentFX

@@ -22,7 +22,7 @@ public class CoinManager : MonoBehaviour {
     private void Start() {
         // بارگذاری مقدار سکه‌ها از PlayerPrefs
         totalCoins = PlayerPrefs.GetInt("MoneyCount", totalCoins);
-        OnCoinsUpdated?.Invoke(totalCoins); // اطلاع‌رسانی مقدار اولیه
+        OnCoinsUpdated?.Invoke(totalCoins);
     }
 
     public void AddCoins(int amount) {

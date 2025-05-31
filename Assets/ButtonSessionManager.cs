@@ -74,11 +74,6 @@ public class ButtonSessionManager : MonoBehaviour {
             SaveButtonOrder();
         }
     }
-    private void OnApplicationFocus(bool focus) {
-        if (!focus) {
-            SaveButtonOrder();
-        }
-    }
     private void OnApplicationQuit() {
         SaveButtonOrder();
     }

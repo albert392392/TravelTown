@@ -217,9 +217,6 @@ public class TaskCreator : MonoBehaviour {
             }
         }
     }
-    private void OnApplicationFocus(bool focus) {
-        SaveTaskCount();
-    }
     private void OnApplicationPause(bool pause) {
         SaveTaskCount();
     }

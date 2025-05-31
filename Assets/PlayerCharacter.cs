@@ -134,14 +134,6 @@ public class PlayerCharacter : MonoBehaviour {
         }
         Debug.Log("LoadPositionAndScale");
     }
-    private void OnApplicationFocus(bool focus) {
-        if (focus) {
-            LoadPositionAndScale();
-        }
-        else {
-            SavePositionAndScale();
-        }
-    }
     private void OnApplicationQuit() {
         SavePositionAndScale();
     }

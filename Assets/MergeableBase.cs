@@ -2,6 +2,8 @@
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
+using Unity.VisualScripting;
+using UnityEditor;
 using UnityEngine;
 
 public enum MergeableState {
@@ -14,8 +16,10 @@ public enum MergeableState {
     Swap,
     ReturnBackPos
 }
+
 public abstract class MergeableBase : MonoBehaviour
 {
+    public Vector3 originalScale;
     public GameObject box;
     public GameObject SpiderWeb;
     public GameObject touchedObject;
@@ -44,6 +48,9 @@ public abstract class MergeableBase : MonoBehaviour
     public GameObject otherGameObjectToswap = null;
 
     public bool Merged = false;
+
+    public InventoryItemDragHandler inventoryItemDragHandler;
+
     protected virtual void Awake()
     {
         var mover = GetComponent<ObjectMover>();
@@ -150,6 +157,7 @@ public abstract class MergeableBase : MonoBehaviour
             }
         }
 
+
         if (other.CompareTag("Box"))
             isNearBox = true;
 
@@ -162,13 +170,18 @@ public abstract class MergeableBase : MonoBehaviour
         if (otherMerge != null && otherMerge.CurrentState != MergeableState.Dragging && otherMerge != this && otherMerge.CurrentState != MergeableState.MovingToTarget)
             HandleMergeOrSwap(otherMerge.gameObject, ref canMerge);
 
-        if (canMerge)
-        {
-            targetCollider = other;
-            parentTransformTargetCollider = other.transform.parent;        
+        if (other.GetComponent<MergeableBase>() != null) {
+            if (canMerge) {
+                targetCollider = other;
+                parentTransformTargetCollider = other.transform.parent;
+            }
+            else if (!canMerge && other.GetComponent<MergeableBase>().otherGameObjectToswap != null) {
+                otherGameObjectToswap = null;
+            }
         }
-        else if (!canMerge && other.GetComponent<MergeableBase>().otherGameObjectToswap != null){
-            otherGameObjectToswap = null;
+
+        if(other.CompareTag("inventory")) {
+            inventoryItemDragHandler = other.GetComponent<InventoryItemDragHandler>();
         }
     }
 
@@ -256,6 +269,10 @@ public abstract class MergeableBase : MonoBehaviour
                     break;
                 }
             }
+        }
+
+        if (other.CompareTag("inventory")) {
+            inventoryItemDragHandler = null;
         }
         //otherGameObjectToswap = null;
     }
@@ -409,5 +426,20 @@ public abstract class MergeableBase : MonoBehaviour
             SetState(MergeableState.Idle);
             UpdateChooseOver(transform.parent);
         });
+    }
+
+    public void In_inventory()
+    {
+        if (inventoryItemDragHandler != null && gameObject != null)
+        {
+            inventoryItemDragHandler.inventoryManager.inventorySlots.Add(gameObject);
+            // Set parent without changing local scale
+            originalScale = gameObject.transform.localScale;
+            gameObject.transform.SetParent(inventoryItemDragHandler.inventoryManager.mergeableParent.transform, false);
+            gameObject.transform.localScale = originalScale;
+            gameObject.GetComponent<Collider>().enabled = false;
+        }
+        gameObject.SetActive(false);
+        UIManager.Instance.chooseOver.SetActive(false);
     }
 }

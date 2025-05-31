@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using TMPro;
 using System.IO;
+using UnityEngine.UI;
 
 [System.Serializable]
 public class ObjectDataFingerHelp {
@@ -27,6 +28,7 @@ public class ObjectRotationHint : MonoBehaviour {
     public SpriteMask spriteMask1;
     public SpriteMask spriteMask2;
     public GameObject squareSprite;
+    public InventoryItemDragHandler inventoryItem;
     [SerializeField] private List<ObjectInformations> objectInformations;
     [SerializeField] private List<GameObject> allObjectMerge = new List<GameObject>();
     private GameObject startObj;
@@ -46,10 +48,16 @@ public class ObjectRotationHint : MonoBehaviour {
     [SerializeField] private HelpMergeManager helpMergeManager;
 
     private void Start() {
-
         helpMergeManager.enabled = false;
 
         if (PlayerPrefs.GetInt(endTutorial, 0) == 0) {
+            if (inventoryItem != null) {
+                inventoryItem.GetComponent<Button>().enabled = false;
+                inventoryItem.GetComponent<Collider>().enabled = false;
+            }
+            else {
+                Debug.LogError("InventoryItemDragHandler is empty ! please add to ");
+            }
             StartCoroutine(HelpFingerMovement());
             helpMergeManager.enabled = false;
         }
@@ -58,6 +66,7 @@ public class ObjectRotationHint : MonoBehaviour {
         }
         _MergeSpawnCount = PlayerPrefs.GetInt(save_MergeSpawnCount,0);
         print(_MergeSpawnCount);
+      
     }
     private void updateTargetPositions() {
         if (startTargetPosition) {
@@ -307,6 +316,8 @@ public class ObjectRotationHint : MonoBehaviour {
     private void CheckCurrentTaskCompletion() {
         if (_MergeSpawnCount == 5) {
             EnergyManager.Instance.totalEnergys += 100;
+            inventoryItem.GetComponent<Button>().enabled = true;
+            inventoryItem.GetComponent<Collider>().enabled = true;
             Destroy(HelpFinger);
             Destroy(squareSprite, 0.2f);
             Destroy(gameObject);

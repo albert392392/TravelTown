@@ -176,14 +176,6 @@ public class DraggableObjectCustomizer : MonoBehaviour {
             transform.DOScale(new Vector2(newScaleX, newScaleY), 0.3f).SetEase(Ease.OutQuad);
         }
     }
-    private void OnApplicationFocus(bool focus) {
-        if (focus) {
-            LoadPositionAndScale();
-        }
-        else {
-            SavePositionAndScale();
-        }
-    }
     private void OnApplicationQuit() {
         SavePositionAndScale();
     }

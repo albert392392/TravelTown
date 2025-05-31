@@ -22,9 +22,10 @@ public class ChildData {
     public Vector2 position;
     public string objName;
     public bool isActive;
-
+    public Vector3 scale; // ← اضافه شود
     public List<ChildData> children = new List<ChildData>();
 }
+
 [System.Serializable]
 public class SavedDataWrapper {
     public List<TargetPositionData> allTargets = new List<TargetPositionData>();
@@ -262,11 +263,6 @@ public class GridManager : MonoBehaviour {
     }
     private void OnApplicationPause(bool pauseStatus) {
         if (pauseStatus) {
-            SaveTargetPositions();
-        }
-    }
-    private void OnApplicationFocus(bool hasFocus) {
-        if (!hasFocus) {
             SaveTargetPositions();
         }
     }
@@ -638,5 +634,13 @@ public class GridManager : MonoBehaviour {
                 ChangeTileToOriginalColor(tile);
             }
         }
+    }
+    public Transform GameObjectToEmptyPos(GameObject obj) {
+        foreach(Transform empty in emptytargetPotations) {
+            obj.transform.position = empty.position;
+            obj.transform.SetParent(empty);
+            return empty;
+        }
+        return null;
     }
 }

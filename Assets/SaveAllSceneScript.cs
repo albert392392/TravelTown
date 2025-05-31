@@ -1,3 +1,4 @@
+using DanielLochner.Assets.SimpleScrollSnap;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -9,6 +10,7 @@ public class SaveAllSceneScript : MonoBehaviour {
     }
     public void SaveMainGameScene() {
         //UIManager.Instance.SaveWaveCustomer();
+        inventorySaveLoadScript.Instance.SaveInventory();
         GridManager.Instance.SaveTargetPositions();
     }
     public void SaveMosqueScene() {
@@ -16,5 +18,6 @@ public class SaveAllSceneScript : MonoBehaviour {
         PlayerCharacter.Instance.SavePositionAndScale();
         DraggableObjectCustomizer.instance.SavePositionAndScale();
         ButtonManager.instance.gamePlay.LastLevelGamePlay();
+        SimpleScrollSnap.instance.SaveAndLoadNearestPanel();
     }
 }

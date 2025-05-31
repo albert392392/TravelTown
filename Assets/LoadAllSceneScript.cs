@@ -1,3 +1,4 @@
+using DanielLochner.Assets.SimpleScrollSnap;
 using UnityEngine;
 using UnityEngine.UI;
 using static ButtonManager;
@@ -9,6 +10,7 @@ public class LoadAllSceneScript : MonoBehaviour {
     public void LoadForGameMainScene() {
         UIManager.Instance.LoadWaveCustomer();
         GridManager.Instance.LoadTargetPositions();
+        inventorySaveLoadScript.Instance.LoadInventory();
     }
     public void LoadForMosqueScene() {
         if (ButtonManager.instance.gamePlay != null) {
@@ -20,5 +22,6 @@ public class LoadAllSceneScript : MonoBehaviour {
         DraggableObjectCustomizer.instance.LoadPositionAndScale();
         TaskCreator.Instance.LoadTaskCount();
         TaskCreator.Instance.CreateTasks();
+        SimpleScrollSnap.instance.LoadAndLoadNearstPanel();
     }
 }

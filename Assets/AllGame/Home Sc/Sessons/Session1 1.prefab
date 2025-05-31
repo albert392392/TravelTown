@@ -10829,6 +10829,7 @@ MonoBehaviour:
     color: {r: 1, g: 0.6487925, b: 0, a: 1}
   - sprite: {fileID: 21300000, guid: 12d52e5ab5830624d9c3667c7b470779, type: 3}
     color: {r: 0.32099622, g: 0.013207495, b: 1, a: 1}
+  isDraggingFromCustomizer: 0
 --- !u!1 &2781087376249471874
 GameObject:
   m_ObjectHideFlags: 0
@@ -22804,6 +22805,7 @@ MonoBehaviour:
     color: {r: 1, g: 0.6487925, b: 0, a: 1}
   - sprite: {fileID: 21300000, guid: 12d52e5ab5830624d9c3667c7b470779, type: 3}
     color: {r: 0.32099622, g: 0.013207495, b: 1, a: 1}
+  isDraggingFromCustomizer: 0
 --- !u!1 &6025741094489725170
 GameObject:
   m_ObjectHideFlags: 0
@@ -31172,6 +31174,7 @@ MonoBehaviour:
     color: {r: 1, g: 0.6487925, b: 0, a: 1}
   - sprite: {fileID: 21300000, guid: 12d52e5ab5830624d9c3667c7b470779, type: 3}
     color: {r: 0.32099622, g: 0.013207495, b: 1, a: 1}
+  isDraggingFromCustomizer: 0
 --- !u!61 &7730338811485859803
 BoxCollider2D:
   m_ObjectHideFlags: 0

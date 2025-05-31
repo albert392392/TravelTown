@@ -32,6 +32,7 @@ public class ObjectMerge : MergeableBase {
     }
 
     private void Update() {
+
         if (Input.touchCount > 0) HandleTouch();
 
         // UIManager.Instance.chooseOver.gameObject.SetActive(!isDragging);
@@ -157,6 +158,9 @@ public class ObjectMerge : MergeableBase {
             return;
         }
 
+        if(inventoryItemDragHandler != null) {
+            In_inventory();
+        }
         // در نهایت بازگشت
         ReturnToOriginalPosition();
     }

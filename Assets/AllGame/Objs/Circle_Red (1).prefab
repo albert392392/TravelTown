@@ -275,10 +275,10 @@ Rigidbody:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7501091947254911981}
-  serializedVersion: 4
+  serializedVersion: 5
   m_Mass: 1
-  m_Drag: 0
-  m_AngularDrag: 0.05
+  m_LinearDamping: 0
+  m_AngularDamping: 0.05
   m_CenterOfMass: {x: 0, y: 0, z: 0}
   m_InertiaTensor: {x: 1, y: 1, z: 1}
   m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
@@ -328,31 +328,33 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bc7a493fd3a015b49a67aa81269fb508, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  prefabMain: {fileID: 7501091947254911981}
   box: {fileID: 0}
   SpiderWeb: {fileID: 0}
+  touchedObject: {fileID: 0}
   mergedPrefab: {fileID: 3298823733066593605, guid: 010f0104bcf7fcc43a0a78b1c2a9fecf, type: 3}
   mergedObject: {fileID: 0}
   customerScript: {fileID: 1839400532211240983, guid: 6479b3f25ae787b4f858d061c9be0727, type: 3}
   CustomerScript: {fileID: 0}
   lastTargetPosition: {fileID: 0}
   lastlastTargetPosition: {fileID: 0}
+  isTouchUp: 0
+  isTouchDown: 0
   isNearBox: 0
-  isSwapping: 0
-  isMovingToTarget: 0
-  targetCollider: {fileID: 0}
+  isFoundCustomerMatch: 0
   detectionRadius: 3
-  isDragging: 0
+  lastEnteredBy: {fileID: 0}
+  otherGameObjectToswap: {fileID: 0}
+  Merged: 0
+  inventoryItemDragHandler: {fileID: 0}
   LastObject: {fileID: 7501091947254911981}
   isOutOfBounds: 0
-  touchedObject: {fileID: 0}
   AddCountCoinPanel: 2
   AddTextLevel: Level1
   PlaceSpritePanel: {fileID: 21300000, guid: da25dee0d2e56864da9ecec054284270, type: 3}
   AddPanelName: Circle Red 1
   DiamondCountSpider: 1
   distanceToMerge: 1
-  isTouchUp: 0
-  isTouchDown: 0
 --- !u!114 &8895632810348421861
 MonoBehaviour:
   m_ObjectHideFlags: 0
