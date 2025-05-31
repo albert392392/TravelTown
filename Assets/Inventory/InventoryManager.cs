@@ -1,4 +1,4 @@
-using NUnit.Framework;
+﻿using NUnit.Framework;
 using UnityEngine;
 using System.Collections.Generic;
 using UnityEngine.UIElements;
@@ -8,7 +8,6 @@ public class InventoryManager : MonoBehaviour
     public List<GameObject> inventorySlots;
     public List<GameObject> inventoryItems;
     public Transform mergeableParent;
-
     public void InventorySlotInformation() {
         int count = Mathf.Min(inventorySlots.Count, inventoryItems.Count);
         for (int i = 0; i < count; i++) {

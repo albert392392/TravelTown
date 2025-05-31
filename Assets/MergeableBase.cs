@@ -432,7 +432,9 @@ public abstract class MergeableBase : MonoBehaviour
     {
         if (inventoryItemDragHandler != null && gameObject != null)
         {
-            inventoryItemDragHandler.inventoryManager.inventorySlots.Add(gameObject);
+            if (!inventoryItemDragHandler.inventoryManager.inventorySlots.Contains(gameObject)) {
+                inventoryItemDragHandler.inventoryManager.inventorySlots.Add(gameObject);
+            }
             // Set parent without changing local scale
             originalScale = gameObject.transform.localScale;
             gameObject.transform.SetParent(inventoryItemDragHandler.inventoryManager.mergeableParent.transform, false);

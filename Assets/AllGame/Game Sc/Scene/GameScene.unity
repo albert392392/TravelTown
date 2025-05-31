@@ -479,19 +479,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 283554674}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 1086786491}
-        m_TargetAssemblyTypeName: InventoryManager, Assembly-CSharp
-        m_MethodName: InventorySlotInformation
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
+      m_Calls: []
 --- !u!114 &283554674
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1189,6 +1177,7 @@ MonoBehaviour:
   inventoryManager: {fileID: 1086786491}
   customerPrefabs:
   - {fileID: 7529928551824202266, guid: c265572b58bd18440b77b2c512e5db71, type: 3}
+  - {fileID: 6704430396002912544, guid: 1104681225f5ff242b712077c2e41ca7, type: 3}
 --- !u!1 &640918448
 GameObject:
   m_ObjectHideFlags: 0

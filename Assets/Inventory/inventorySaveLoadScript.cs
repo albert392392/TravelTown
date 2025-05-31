@@ -1,3 +1,4 @@
+﻿using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -12,10 +13,20 @@ public class inventorySaveLoadScript : MonoBehaviour {
     public static inventorySaveLoadScript Instance { get; private set; }
     public InventoryManager inventoryManager;
     public List<GameObject> customerPrefabs; // Prefabs that exist in Inventory
-
+    public bool hasSaved = false;
     private string savePath => Application.persistentDataPath + "/inventory.json";
 
-    private void Start() {
+    private void Awake() {
+        if (Instance == null) {
+            Instance = this;
+            DontDestroyOnLoad(gameObject); // حفظ آبجکت هنگام تغییر سین
+        }
+        else {
+            Destroy(gameObject);
+        }
+    }
+    private IEnumerator Start() {
+        yield return new WaitForSeconds(0.1f); // مطمئن شو Canvas آماده است
         LoadInventory();
     }
 
@@ -23,6 +34,7 @@ public class inventorySaveLoadScript : MonoBehaviour {
         InventorySaveData data = new InventorySaveData();
 
         foreach (Transform item in inventoryManager.mergeableParent) {
+            if (item.GetComponent<PrefabIdentifier>() == null) continue;
             var childData = SaveChild(item);
             if (childData != null)
                 data.children.Add(childData);
@@ -75,14 +87,20 @@ public class inventorySaveLoadScript : MonoBehaviour {
             return;
         }
 
-        GameObject obj = Instantiate(prefab, data.position, Quaternion.identity);
-
-        obj.GetComponent<MergeableBase>().In_inventory();
-
+        GameObject obj = Instantiate(prefab, data.position, Quaternion.identity,parent);
         obj.transform.localScale = data.scale;
 
-        // Add to inventorySlots list
+        //obj.GetComponent<MergeableBase>().In_inventory();
+
         inventoryManager.inventorySlots.Add(obj);
+
+        var mergeableBase = obj.GetComponent<MergeableBase>();
+        if(mergeableBase != null) {
+            mergeableBase.originalScale = data.scale; // Set original scale for mergeable items
+            mergeableBase.inventoryItemDragHandler = FindObjectOfType<InventoryItemDragHandler>();
+            obj.SetActive(false);
+        }
+        // Add to inventorySlots list
     }
 
     private void OnApplicationPause(bool pauseStatus) {
@@ -90,6 +108,9 @@ public class inventorySaveLoadScript : MonoBehaviour {
             SaveInventory();
     }
     private void OnApplicationQuit() {
-        SaveInventory();
+        if (!hasSaved) {
+            SaveInventory();
+            hasSaved = true;
+        }
     }
 }

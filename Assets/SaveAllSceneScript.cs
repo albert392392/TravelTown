@@ -10,7 +10,10 @@ public class SaveAllSceneScript : MonoBehaviour {
     }
     public void SaveMainGameScene() {
         //UIManager.Instance.SaveWaveCustomer();
-        inventorySaveLoadScript.Instance.SaveInventory();
+        if (!inventorySaveLoadScript.Instance.hasSaved) {
+            inventorySaveLoadScript.Instance.SaveInventory();
+            inventorySaveLoadScript.Instance.hasSaved = true;
+        }
         GridManager.Instance.SaveTargetPositions();
     }
     public void SaveMosqueScene() {
