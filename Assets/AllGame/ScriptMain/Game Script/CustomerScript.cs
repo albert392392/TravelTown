@@ -6,6 +6,7 @@ using System.Text.RegularExpressions;
 
 public class CustomerScript : MonoBehaviour
 {
+
     public Button CustomerButton;
     public TextMeshProUGUI CustomerCoinText;
     public int coinValue; // Amount added to coins
@@ -16,6 +17,7 @@ public class CustomerScript : MonoBehaviour
     public Transform papper;
     public bool EndOrders { get; private set; }
     private bool matchFound;
+    public string CustomerId { get; set; }
 
     private void Start()
     {

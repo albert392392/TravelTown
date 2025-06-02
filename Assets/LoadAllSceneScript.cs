@@ -8,7 +8,7 @@ public class LoadAllSceneScript : MonoBehaviour {
         button = GetComponent<Button>();
     }
     public void LoadForGameMainScene() {
-        UIManager.Instance.LoadWaveCustomer();
+       //IManager.Instance.LoadWaveCustomer();
         GridManager.Instance.LoadTargetPositions();
         inventorySaveLoadScript.Instance.LoadInventory();
     }

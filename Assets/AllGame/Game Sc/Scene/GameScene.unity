@@ -1178,6 +1178,7 @@ MonoBehaviour:
   customerPrefabs:
   - {fileID: 7529928551824202266, guid: c265572b58bd18440b77b2c512e5db71, type: 3}
   - {fileID: 6704430396002912544, guid: 1104681225f5ff242b712077c2e41ca7, type: 3}
+  hasSaved: 0
 --- !u!1 &640918448
 GameObject:
   m_ObjectHideFlags: 0
@@ -12880,50 +12881,57 @@ MonoBehaviour:
   AllMergeSprites: []
   waveHolders:
   - customersPrefabs:
-    - customer: {fileID: 1839400532211240983, guid: 6479b3f25ae787b4f858d061c9be0727, type: 3}
+    - id: qqqqq
+      customer: {fileID: 1839400532211240983, guid: 6479b3f25ae787b4f858d061c9be0727, type: 3}
+      data:
+        CustomerObjectPrefabs:
+        - {fileID: 669540257363403441, guid: 56f412f1515b98f4f8cda2f58e55c611, type: 3}
+        - {fileID: 669540257363403441, guid: 56f412f1515b98f4f8cda2f58e55c611, type: 3}
+        - {fileID: 669540257363403441, guid: 56f412f1515b98f4f8cda2f58e55c611, type: 3}
+        CoinValue: 19
+    - id: wwwww
+      customer: {fileID: 1839400532211240983, guid: 6479b3f25ae787b4f858d061c9be0727, type: 3}
       data:
         CustomerObjectPrefabs:
         - {fileID: 669540257363403441, guid: 56f412f1515b98f4f8cda2f58e55c611, type: 3}
         - {fileID: 4176118066951020983, guid: 64ad51103f4283b42ba131666503784e, type: 3}
-        - {fileID: 4176118066951020983, guid: 64ad51103f4283b42ba131666503784e, type: 3}
+        - {fileID: 415242228479423943, guid: f46653f7f4134f64fbc017a4438f3074, type: 3}
         CoinValue: 10
-    - customer: {fileID: 1839400532211240983, guid: 6479b3f25ae787b4f858d061c9be0727, type: 3}
+    - id: eeeeee
+      customer: {fileID: 1839400532211240983, guid: 6479b3f25ae787b4f858d061c9be0727, type: 3}
       data:
         CustomerObjectPrefabs:
         - {fileID: 4176118066951020983, guid: 64ad51103f4283b42ba131666503784e, type: 3}
         - {fileID: 5735210116586930128, guid: 31b40f723619c484ba4da0e660b54f43, type: 3}
-        - {fileID: 5735210116586930128, guid: 0c4610a7195a6dd4186cc4e385713808, type: 3}
-        CoinValue: 45
-    - customer: {fileID: 1839400532211240983, guid: 6479b3f25ae787b4f858d061c9be0727, type: 3}
-      data:
-        CustomerObjectPrefabs:
-        - {fileID: 4176118066951020983, guid: 64ad51103f4283b42ba131666503784e, type: 3}
         - {fileID: 5735210116586930128, guid: 31b40f723619c484ba4da0e660b54f43, type: 3}
-        - {fileID: 5735210116586930128, guid: 0c4610a7195a6dd4186cc4e385713808, type: 3}
         CoinValue: 45
-    - customer: {fileID: 1839400532211240983, guid: 6479b3f25ae787b4f858d061c9be0727, type: 3}
+    - id: 013109231
+      customer: {fileID: 1839400532211240983, guid: 6479b3f25ae787b4f858d061c9be0727, type: 3}
       data:
         CustomerObjectPrefabs:
-        - {fileID: 669540257363403441, guid: 56f412f1515b98f4f8cda2f58e55c611, type: 3}
         - {fileID: 4176118066951020983, guid: 64ad51103f4283b42ba131666503784e, type: 3}
-        - {fileID: 4176118066951020983, guid: 64ad51103f4283b42ba131666503784e, type: 3}
-        CoinValue: 10
+        - {fileID: 5735210116586930128, guid: 0c4610a7195a6dd4186cc4e385713808, type: 3}
+        - {fileID: 5735210116586930128, guid: 0c4610a7195a6dd4186cc4e385713808, type: 3}
+        CoinValue: 44
     _customerList: []
     customerControlInGame: 2
     nextCustomerIndex: 0
   - customersPrefabs:
-    - customer: {fileID: 1839400532211240983, guid: 6479b3f25ae787b4f858d061c9be0727, type: 3}
+    - id: 0000
+      customer: {fileID: 1839400532211240983, guid: 6479b3f25ae787b4f858d061c9be0727, type: 3}
       data:
         CustomerObjectPrefabs:
         - {fileID: 5735210116586930128, guid: 0c4610a7195a6dd4186cc4e385713808, type: 3}
         - {fileID: 5735210116586930128, guid: 0c4610a7195a6dd4186cc4e385713808, type: 3}
         CoinValue: 4
-    - customer: {fileID: 1839400532211240983, guid: 6479b3f25ae787b4f858d061c9be0727, type: 3}
+    - id: 8888
+      customer: {fileID: 1839400532211240983, guid: 6479b3f25ae787b4f858d061c9be0727, type: 3}
       data:
         CustomerObjectPrefabs:
         - {fileID: 5735210116586930128, guid: 31b40f723619c484ba4da0e660b54f43, type: 3}
         CoinValue: 7
-    - customer: {fileID: 1839400532211240983, guid: 6479b3f25ae787b4f858d061c9be0727, type: 3}
+    - id: 6666
+      customer: {fileID: 1839400532211240983, guid: 6479b3f25ae787b4f858d061c9be0727, type: 3}
       data:
         CustomerObjectPrefabs:
         - {fileID: 5735210116586930128, guid: 1916cd30f3017ae4ca40e033177b326b, type: 3}
@@ -12932,23 +12940,27 @@ MonoBehaviour:
     customerControlInGame: 3
     nextCustomerIndex: 0
   - customersPrefabs:
-    - customer: {fileID: 1839400532211240983, guid: 6479b3f25ae787b4f858d061c9be0727, type: 3}
+    - id: 444hh
+      customer: {fileID: 1839400532211240983, guid: 6479b3f25ae787b4f858d061c9be0727, type: 3}
       data:
         CustomerObjectPrefabs:
         - {fileID: 5735210116586930128, guid: 0c4610a7195a6dd4186cc4e385713808, type: 3}
         - {fileID: 5735210116586930128, guid: 0c4610a7195a6dd4186cc4e385713808, type: 3}
         CoinValue: 30
-    - customer: {fileID: 1839400532211240983, guid: 6479b3f25ae787b4f858d061c9be0727, type: 3}
+    - id: yty1323
+      customer: {fileID: 1839400532211240983, guid: 6479b3f25ae787b4f858d061c9be0727, type: 3}
       data:
         CustomerObjectPrefabs:
         - {fileID: 5735210116586930128, guid: 31b40f723619c484ba4da0e660b54f43, type: 3}
         CoinValue: 11
-    - customer: {fileID: 1839400532211240983, guid: 6479b3f25ae787b4f858d061c9be0727, type: 3}
+    - id: gssrgrg
+      customer: {fileID: 1839400532211240983, guid: 6479b3f25ae787b4f858d061c9be0727, type: 3}
       data:
         CustomerObjectPrefabs:
         - {fileID: 5735210116586930128, guid: 1916cd30f3017ae4ca40e033177b326b, type: 3}
         CoinValue: 2
-    - customer: {fileID: 1839400532211240983, guid: 6479b3f25ae787b4f858d061c9be0727, type: 3}
+    - id: nnvbbv
+      customer: {fileID: 1839400532211240983, guid: 6479b3f25ae787b4f858d061c9be0727, type: 3}
       data:
         CustomerObjectPrefabs:
         - {fileID: 5735210116586930128, guid: 1916cd30f3017ae4ca40e033177b326b, type: 3}
@@ -12956,7 +12968,7 @@ MonoBehaviour:
     _customerList: []
     customerControlInGame: 4
     nextCustomerIndex: 0
-  CustomerSetParent: {fileID: 33888499703473668}
+  CustomerSetParent: {fileID: 2054656129652446750}
   merge_particleSystem: {fileID: 1257911910}
   placeTextLevel: {fileID: 3359282056995627567}
   placePanelText: {fileID: 550391867}

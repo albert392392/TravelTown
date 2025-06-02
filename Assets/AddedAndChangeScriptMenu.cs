@@ -42,7 +42,7 @@ public class AddedAndChangeScriptMenu : MonoBehaviour {
     private float touchStartTime;
     private MoveWhenPanelStartedManager moveWhenPanelStartedManager;
     private DraggableObjectCustomizer draggableObjectCustomizer = null;
-    public List<ObjectMenuAdderClick> objectMenuAdderClick;
+   // public List<ObjectMenuAdderClick> objectMenuAdderClick;
     [SerializeField] private List<ObjectMenuItem> objectMenuItem;
 
     public bool isDraggingFromCustomizer = false;
@@ -269,6 +269,10 @@ public class AddedAndChangeScriptMenu : MonoBehaviour {
             isToggled = true;
             choosePanel4 = GameObject.FindGameObjectWithTag("choosePanel4");
             Destroy(choosePanel4.gameObject);
+
+            foreach (ObjectMenuAdderClick objMenuAdder in FindObjectsOfType<ObjectMenuAdderClick>()) {
+                objMenuAdder.addedAndChangeScriptMenu = GetComponent<AddedAndChangeScriptMenu>();
+            }
         }
         else {
             playfunctionTransparenty = true;

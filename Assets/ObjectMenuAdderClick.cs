@@ -29,7 +29,7 @@ public class ObjectMenuAdderClick : MonoBehaviour {
             addedAndChangeScriptMenu.OnCorrectClickBtn(btnCorrect);
         }
         if(AddedAndChangeScriptMenu2 != null) {
-            AddedAndChangeScriptMenu2.OnCorrectClickBtn(btnCorrect);
+            AddedAndChangeScriptMenu2.OnCorrectClickBtn();
         }
     }
 
@@ -40,7 +40,7 @@ public class ObjectMenuAdderClick : MonoBehaviour {
             addedAndChangeScriptMenu.OnNotCorrectClickBtn(btnNotCorrect);
         }
         if (AddedAndChangeScriptMenu2 != null) {
-            AddedAndChangeScriptMenu2.OnNotCorrectClickBtn(btnNotCorrect);
+            AddedAndChangeScriptMenu2.OnNotCorrectClickBtn();
         }
     }
 

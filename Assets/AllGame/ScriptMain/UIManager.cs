@@ -1,12 +1,9 @@
-﻿
-using System;
+﻿using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using TMPro;
-using Unity.VisualScripting;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class UIManager : MonoBehaviour {
@@ -20,7 +17,7 @@ public class UIManager : MonoBehaviour {
     [HideInInspector] public List<Sprite> AllMergeSprites;
     [SerializeField] private WaveHolder[] waveHolders;
 
-    [SerializeField] private GameObject CustomerSetParent;
+    public Transform CustomerSetParent;
     public ParticleSystem merge_particleSystem;
     public Text placeTextLevel;
     public Text placePanelText;
@@ -40,15 +37,15 @@ public class UIManager : MonoBehaviour {
     [SerializeField] private string nextCustomerIndexSave;
     [SerializeField] private string waveIndexSave;
     public GameObject chooseOver;
+
     private void Awake() {
-        // بررسی اینکه دکمه به درستی تنظیم شده باشد
         if (ButtinPinSpider == null) {
             Debug.LogError("ButtinPinSpider is not assigned in UIManager.");
         }
         Instance = this;
     }
+
     private void Start() {
-        InitializeWaveProgress();
         merge_particleSystem.Stop();
         _canAddCoinPanel = true;
         initialAddCountCoinPanel = AddCountCoinPanel;
@@ -56,22 +53,23 @@ public class UIManager : MonoBehaviour {
         if (ButtinPinSpider == null) {
             Debug.LogError("ButtinPinSpider is not assigned in UIManager.");
         }
-        if (ButtinPinSpider == null) {
-            Debug.LogError("ButtinPinSpider is not assigned.");
-        }
-        ButtinPinSpider.interactable = false; // ابتدا غیرفعال
+        InitializeWaveProgress();
+        ButtinPinSpider.interactable = false;
         ButtinPinSpider.onClick.RemoveAllListeners();
         ButtinPinSpider.onClick.AddListener(OnSpiderButtonClick);
     }
     private void InitializeWaveProgress() {
-        LoadWaveCustomer();
+        waveIndex = PlayerPrefs.GetInt(waveIndexSave, 0);
         for (int i = 0; i <= waveIndex; i++) {
-            waveHolders[i].Spawn(CustomerSetParent.transform);
+            waveHolders[i].LoadState(i);
+            waveHolders[i].SpawnInitialCustomers(CustomerSetParent.transform); // ✅ اصلاح‌شده
         }
     }
+
+
     public void SetCurrentSpider(SpiderScript spider) {
         spiderScript = spider;
-        ButtinPinSpider.interactable = true; // فعال کردن دکمه
+        ButtinPinSpider.interactable = true;
         TextPin.text = $"Spider Info: Name: {spider.name}, Diamond Price: {spider.DiamondCount}";
     }
 
@@ -84,15 +82,16 @@ public class UIManager : MonoBehaviour {
         if (DiamondManager.Instance.GetDiamondCount() >= spiderScript.DiamondCount) {
             DiamondManager.Instance.SpendDiamonds(spiderScript.DiamondCount);
             Debug.Log($"DiamondCount decreased by {spiderScript.DiamondCount}");
-            Destroy(spiderScript.gameObject); // نابود کردن آبجکت
+            Destroy(spiderScript.gameObject);
             TextPin.text = string.Empty;
-            ButtinPinSpider.interactable = false; // غیرفعال کردن دکمه
-            spiderScript = null; // پاک کردن مرجع
+            ButtinPinSpider.interactable = false;
+            spiderScript = null;
         }
         else {
             Debug.LogWarning("Not enough diamonds.");
         }
     }
+
     public void OnClickPinButton() {
         ScatterObjectsWithInterval scatterObjectsWithInterval = FindObjectOfType<ScatterObjectsWithInterval>();
         if (DiamondManager.Instance.GetDiamondCount() >= scatterObjectsWithInterval.DiamondNeedForClock) {
@@ -104,11 +103,9 @@ public class UIManager : MonoBehaviour {
             scatterObjectsWithInterval.scatterObjectTimerClock.SetActive(false);
         }
     }
+
     private void FindCustomer() {
         placeButtonPanel.onClick.AddListener(OnClickPanelButton);
-        for (int i = 0; i < waveHolders[waveIndex]._customerList.Count; i++) {
-            var customer = waveHolders[waveIndex]._customerList[i];
-        }
     }
 
     public void OnClickPanelButton() {
@@ -124,7 +121,7 @@ public class UIManager : MonoBehaviour {
 
         AllMergeSprites.Add(PlaceSpritePanel.sprite);
         if (_canAddCoinPanel) {
-            CoinManager.Instance.AddCoins(AddCountCoinPanel); // افزودن به سکه‌ها
+            CoinManager.Instance.AddCoins(AddCountCoinPanel);
         }
 
         if (LastMargeObject) {
@@ -132,31 +129,29 @@ public class UIManager : MonoBehaviour {
         }
 
         if (IsFirstClick) {
-            CoinManager.Instance.AddCoins(AddCountCoinPanel); // افزودن سکه در کلیک اول
+            CoinManager.Instance.AddCoins(AddCountCoinPanel);
         }
         else {
-            CoinManager.Instance.SpendCoins(AddCountCoinPanel); // کسر سکه در کلیک دوم
+            CoinManager.Instance.SpendCoins(AddCountCoinPanel);
         }
 
         IsFirstClick = !IsFirstClick;
         placeCountCoin.text = Convert.ToString(IsFirstClick ? AddCountCoinPanel : initialAddCountCoinPanel);
     }
-
     public void CheckWave(CustomerScript customer) {
-
         if (customer.EndOrders) {
-            var parent = customer.transform.parent;
             Destroy(customer.gameObject);
-            waveHolders[waveIndex]._customerList.Remove(customer);
-            waveHolders[waveIndex].OnCustomerRemoved(CustomerSetParent.transform);
-            // If all customers are done and no more to spawn, go to next wave
-            if (waveHolders[waveIndex]._customerList.Count == 0 &&
-                waveHolders[waveIndex].customerControlInGame + waveHolders[waveIndex].nextCustomerIndex >= waveHolders[waveIndex].customersPrefabs.Length) {
+            waveHolders[waveIndex].OnCustomerRemoved(CustomerSetParent.transform, waveIndex, customer);
+
+            if (waveHolders[waveIndex]._customerList.Count == 0) {
                 waveIndex++;
-                if (waveIndex < waveHolders.Length)
-                    waveHolders[waveIndex].Spawn(CustomerSetParent.transform);
+                PlayerPrefs.SetInt(waveIndexSave, waveIndex);
+                PlayerPrefs.Save();
+
+                if (waveIndex < waveHolders.Length) {
+                    waveHolders[waveIndex].SpawnInitialCustomers(CustomerSetParent.transform);
+                }
             }
-            SaveWaveCustomer();
         }
     }
 
@@ -164,141 +159,145 @@ public class UIManager : MonoBehaviour {
         customerScript = waveHolders[waveIndex].customersPrefabs[waveIndex].customer;
         return customerScript;
     }
+    [Serializable]
+    public class CustomerSaveData {
+        public string id;
+        public Vector3 position;
+        public Quaternion rotation;
+        // سایر ویژگی‌های مورد نیاز
+    }
+
+    [Serializable]
+    private class WaveHolderSaveData {
+        public List<CustomerSaveData> activeCustomers;
+        public List<string> removedCustomerIds;
+        public int nextSpawnIndex;
+    }
 
     [Serializable]
     private class WaveHolder {
         public CustomerHolder[] customersPrefabs;
         public List<CustomerScript> _customerList = new();
         public int customerControlInGame;
-        public int nextCustomerIndex;
+        private HashSet<string> removedIds = new();
+        private Dictionary<string, CustomerHolder> idToHolder;
+        public int nextSpawnIndex;
+        public void InitDictionary() {
+            idToHolder = customersPrefabs
+              .Where(h => h != null && h.customer != null && h.data != null && !string.IsNullOrEmpty(h.id))
 
-        public void Spawn(Transform spawnPoint) {
+                .ToDictionary(h => h.id, h => h);
+        }
+        public void SpawnInitialCustomers(Transform spawnPoint) {
+            _customerList.RemoveAll(c => c == null);
 
-            // Ensure only customerControlInGame customers are present
-            while (_customerList.Count < customerControlInGame && nextCustomerIndex < customersPrefabs.Length) {
-                var holder = customersPrefabs[nextCustomerIndex];
+            InitDictionary();
+
+            while (_customerList.Count < customerControlInGame && nextSpawnIndex < customersPrefabs.Length) {
+                var holder = customersPrefabs[nextSpawnIndex];
+                nextSpawnIndex++;
+
+                if (holder == null || removedIds.Contains(holder.id)) continue;
+                if (string.IsNullOrEmpty(holder.id) || _customerList.Any(c => c.CustomerId == holder.id)) continue;
+
+
+
                 var customer = GameObject.Instantiate(holder.customer, spawnPoint.position, spawnPoint.rotation);
+                customer.CustomerId = holder.id;
                 customer.transform.SetParent(spawnPoint);
-
                 customer.coinValue = holder.data.CoinValue;
                 customer.CustomerCoinText.text = holder.data.CoinValue.ToString();
 
-                if (holder.data != null) {
+                int[] indexer = { 1, 0, 2 };
+                int currentIndex = 0;
+                foreach (var prefab in holder.data.CustomerObjectPrefabs) {
+                    var parent = customer.papper.GetChild(indexer[currentIndex]);
+                    var obj = GameObject.Instantiate(prefab, Vector3.zero, Quaternion.identity, parent);
+                    obj.transform.localScale = Vector3.one;
+                    if (obj.TryGetComponent(out RectTransform rt))
+                        rt.anchoredPosition = Vector2.zero;
+                    customer.CustomerObjectPrefabs.Add(obj);
+                    currentIndex = (currentIndex + 1) % indexer.Length;
+                }
+
+                _customerList.Add(customer);
+            }
+        }
+        public void OnCustomerRemoved(Transform spawnPoint, int waveIdx, CustomerScript removedCustomer) {
+            string id = removedCustomer.CustomerId;
+
+            if (!string.IsNullOrEmpty(id)) {
+                removedIds.Add(id);
+            }
+
+            _customerList.Remove(removedCustomer);
+            SpawnInitialCustomers(spawnPoint);
+            SaveState(waveIdx);
+        }
+
+        public void SaveState(int waveIdx) {
+            var data = new WaveHolderSaveData {
+                activeCustomers = _customerList.Select(c => new CustomerSaveData {
+                    id = c.CustomerId,
+                    position = c.transform.position,
+                    rotation = c.transform.rotation
+                    // ذخیره سایر ویژگی‌ها
+                }).ToList(),
+                removedCustomerIds = removedIds.ToList(),
+                nextSpawnIndex = this.nextSpawnIndex
+            };
+
+            string json = JsonUtility.ToJson(data);
+            PlayerPrefs.SetString($"waveholder_{waveIdx}_data", json);
+        }
+
+
+        public void LoadState(int waveIdx) {
+            InitDictionary();
+            string json = PlayerPrefs.GetString($"waveholder_{waveIdx}_data", "");
+            if (string.IsNullOrEmpty(json)) return;
+
+            var data = JsonUtility.FromJson<WaveHolderSaveData>(json);
+            nextSpawnIndex = data.nextSpawnIndex;
+            removedIds = new HashSet<string>(data.removedCustomerIds);
+            _customerList.Clear();
+
+            foreach (var customerData in data.activeCustomers) {
+                if (idToHolder.TryGetValue(customerData.id, out var holder)) {
+                    var customer = GameObject.Instantiate(holder.customer, customerData.position, customerData.rotation, UIManager.Instance.CustomerSetParent);
+                    customer.transform.localScale = Vector3.one; // Ensure correct scale
+                    customer.CustomerId = holder.id;
+                    customer.coinValue = holder.data.CoinValue;
+                    customer.CustomerCoinText.text = holder.data.CoinValue.ToString();
+                    // بازیابی سایر ویژگی‌ها
+                    _customerList.Add(customer);
+
                     int[] indexer = { 1, 0, 2 };
                     int currentIndex = 0;
-
                     foreach (var prefab in holder.data.CustomerObjectPrefabs) {
                         var parent = customer.papper.GetChild(indexer[currentIndex]);
                         var obj = GameObject.Instantiate(prefab, Vector3.zero, Quaternion.identity, parent);
-                        obj.name = prefab.name;
                         obj.transform.localScale = Vector3.one;
-
-                        var rt = obj.GetComponent<RectTransform>();
-                        if (rt != null) rt.anchoredPosition = Vector2.zero;
-
+                        if (obj.TryGetComponent(out RectTransform rt))
+                            rt.anchoredPosition = Vector2.zero;
                         customer.CustomerObjectPrefabs.Add(obj);
                         currentIndex = (currentIndex + 1) % indexer.Length;
                     }
                 }
 
-                _customerList.Add(customer);
-                nextCustomerIndex++;
             }
+
         }
 
-        public void OnCustomerRemoved(Transform spawnPoint) {
-            // Remove nulls or destroyed customers
-            _customerList.RemoveAll(c => c == null);
-            // Spawn new customer if needed
-            if (_customerList.Count < customerControlInGame && nextCustomerIndex < customersPrefabs.Length) {
-                Spawn(spawnPoint);
-            }
-        }
 
-        /*
-        public void DestoyAllCustomer()
-        {
-            foreach (var customer in _customerList)
-            {
-                if (customer != null)
-                    GameObject.Destroy(customer.gameObject);
-            }
-            _customerList.Clear();
-        }*/
     }
-    public void SaveWaveCustomer() {
-        for (int i = 0; i < waveHolders.Length; i++) {
-            PlayerPrefs.SetInt($"{nextCustomerIndexSave}_{i}", waveHolders[i].nextCustomerIndex);
-
-            // ذخیره ID مشتری‌های فعلی
-            List<int> activeCustomerIndices = new List<int>();
-            foreach (var customer in waveHolders[i]._customerList) {
-                int index = Array.IndexOf(waveHolders[i].customersPrefabs, waveHolders[i].customersPrefabs.FirstOrDefault(h => h.customer.name == customer.name.Replace("(Clone)", "").Trim()));
-                if (index >= 0) {
-                    activeCustomerIndices.Add(index);
-                }
-            }
-
-            string json = JsonUtility.ToJson(new IntListWrapper { list = activeCustomerIndices });
-            PlayerPrefs.SetString($"active_customers_{i}", json);
-        }
-        PlayerPrefs.SetInt(waveIndexSave, waveIndex);
-        PlayerPrefs.Save();
-    }
-    [Serializable]
-    private class IntListWrapper {
-        public List<int> list;
-    }
-
-
-    public void LoadWaveCustomer() {
-        for (int i = 0; i < waveHolders.Length; i++) {
-            waveHolders[i].nextCustomerIndex = PlayerPrefs.GetInt($"{nextCustomerIndexSave}_{i}", waveHolders[i].nextCustomerIndex);
-        }
-        waveIndex = PlayerPrefs.GetInt(waveIndexSave, waveIndex);
-
-        for (int i = 0; i < waveHolders.Length; i++) {
-            string json = PlayerPrefs.GetString($"active_customers_{i}", "");
-            if (!string.IsNullOrEmpty(json)) {
-                IntListWrapper wrapper = JsonUtility.FromJson<IntListWrapper>(json);
-                foreach (int customerIndex in wrapper.list) {
-                    if (customerIndex >= 0 && customerIndex < waveHolders[i].customersPrefabs.Length) {
-                        var holder = waveHolders[i].customersPrefabs[customerIndex];
-                        var customer = GameObject.Instantiate(holder.customer, CustomerSetParent.transform.position, Quaternion.identity, CustomerSetParent.transform);
-                        customer.transform.localScale = Vector3.one;
-                        customer.coinValue = holder.data.CoinValue;
-                        customer.CustomerCoinText.text = holder.data.CoinValue.ToString();
-
-                        if (holder.data != null) {
-                            int[] indexer = { 1, 0, 2 };
-                            int currentIndex = 0;
-
-                            foreach (var prefab in holder.data.CustomerObjectPrefabs) {
-                                var parent = customer.papper.GetChild(indexer[currentIndex]);
-                                var obj = GameObject.Instantiate(prefab, Vector3.zero, Quaternion.identity, parent);
-                                obj.name = prefab.name;
-                                obj.transform.localScale = Vector3.one;
-
-                                var rt = obj.GetComponent<RectTransform>();
-                                if (rt != null) rt.anchoredPosition = Vector2.zero;
-
-                                customer.CustomerObjectPrefabs.Add(obj);
-                                currentIndex = (currentIndex + 1) % indexer.Length;
-                            }
-                        }
-
-                        waveHolders[i]._customerList.Add(customer);
-                    }
-                }
-            }
-        }
-    }
-
     [Serializable]
     private class CustomerHolder {
+        public string id; // شناسه یکتا
         public CustomerScript customer;
         public CustomerData data;
     }
+
 
     [Serializable]
     public class CustomerData {

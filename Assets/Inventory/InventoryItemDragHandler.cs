@@ -4,6 +4,8 @@ using System.Collections.Generic;
 using UnityEngine.UI;
 public class InventoryItemDragHandler : MonoBehaviour
 {
+    public static InventoryItemDragHandler Instance { get; private set; }
+
     public InventoryManager inventoryManager;
 
     public List<GameObject> gameObjectOff;
@@ -38,4 +40,5 @@ public class InventoryItemDragHandler : MonoBehaviour
             inventoryManager.transform.GetChild(0).gameObject.SetActive(false);
         }
     }
+
 }

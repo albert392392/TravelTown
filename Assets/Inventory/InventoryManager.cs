@@ -8,6 +8,10 @@ public class InventoryManager : MonoBehaviour
     public List<GameObject> inventorySlots;
     public List<GameObject> inventoryItems;
     public Transform mergeableParent;
+    public bool isInventoryEnabled;
+    private void Update() {
+        EnableOrDisableInventory();
+    }
     public void InventorySlotInformation() {
         int count = Mathf.Min(inventorySlots.Count, inventoryItems.Count);
         for (int i = 0; i < count; i++) {
@@ -21,6 +25,17 @@ public class InventoryManager : MonoBehaviour
 
                 slot.inventoryManager = this;
             }
+        }
+    }
+    public void EnableOrDisableInventory() {
+        if(inventorySlots.Count == inventoryItems.Count)
+        {
+            isInventoryEnabled = false;
+            InventoryItemDragHandler.Instance.GetComponent<Collider>().enabled = false;
+        }
+        else {
+            isInventoryEnabled = true;
+            InventoryItemDragHandler.Instance.GetComponent<Collider>().enabled = true;
         }
     }
 }

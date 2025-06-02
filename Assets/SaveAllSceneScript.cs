@@ -6,10 +6,9 @@ public class SaveAllSceneScript : MonoBehaviour {
     private Button button;
     private void Start() {
         button = GetComponent<Button>();
-
     }
     public void SaveMainGameScene() {
-        //UIManager.Instance.SaveWaveCustomer();
+       //IManager.Instance.SaveWaveCustomer();
         if (!inventorySaveLoadScript.Instance.hasSaved) {
             inventorySaveLoadScript.Instance.SaveInventory();
             inventorySaveLoadScript.Instance.hasSaved = true;

@@ -27,7 +27,7 @@ public class AddedAndChangeScriptMenu2 : MonoBehaviour {
     [SerializeField] private bool isIncreasing = true; // حالت تغییر مقدار ترنسپرنتی (افزایش یا کاهش)
     public bool playfunction;
     private bool playfunctionTransparenty;
-    public bool isToggled; // متغیر برای مدیریت حالت کلیک‌ها
+    public bool isToggled = false; // متغیر برای مدیریت حالت کلیک‌ها
     private bool isTouched;
     public bool isObjectActive;
 
@@ -37,8 +37,9 @@ public class AddedAndChangeScriptMenu2 : MonoBehaviour {
     public string previousSpriteKey;
     public string previousColorKey;
     private float touchStartTime;
+
     private MoveWhenPanelStartedManager moveWhenPanelStartedManager;
-    public List<ObjectMenuAdderClick> objectMenuAdderClick;
+   // public List<ObjectMenuAdderClick> objectMenuAdderClick;
     [SerializeField] private List<ObjectMenuItem> objectMenuItem;
     /*
     private void Awake() {
@@ -216,7 +217,7 @@ public class AddedAndChangeScriptMenu2 : MonoBehaviour {
         }
     }
     private void HandleObjectClick(GameObject obj) {
-        isTouched = true;
+       // isTouched = true;
         if (!isToggled) {
             // objectMenuAdderClick.addedAndChangeScriptMenu = GetComponent<AddedAndChangeScriptMenu>();
             RequestTothePanelChooseObjectAdd();
@@ -224,21 +225,24 @@ public class AddedAndChangeScriptMenu2 : MonoBehaviour {
             playfunction = true;
             //ChangeTransParentyInLoop();
             UnableObjsTransparenty();
+            foreach (ObjectMenuAdderClick objMenuAdder in FindObjectsOfType<ObjectMenuAdderClick>()) {
+                objMenuAdder.AddedAndChangeScriptMenu2 = GetComponent<AddedAndChangeScriptMenu2>();
+            }
             //scrollBarMenu = FindAnyObjectByType<scroll_Into>().gameObject;
             //moveWhenPanelStartedManager.ScrollBar = scrollBarMenu.gameObject;
             moveWhenPanelStartedManager.isStartMove = true;
             moveWhenPanelStartedManager.isMoveToFirst = false;
-            isToggled = false;
-
+            isToggled = true;
         }
         else {
+        
             playfunctionTransparenty = true;
             playfunction = false;
             OnableObjsTransparenty();
             FullTransparenty();
             moveWhenPanelStartedManager.isStartMove = false;
             moveWhenPanelStartedManager.isMoveToFirst = true;
-            isToggled = true;
+            isToggled = false;
         }
 
         // تغییر حالت isToggled
@@ -259,6 +263,8 @@ public class AddedAndChangeScriptMenu2 : MonoBehaviour {
 
             ObjectMenuAdderClick allMenuAdderClick = newMenuItem.GetComponent<ObjectMenuAdderClick>();
             allMenuAdderClick.AddedAndChangeScriptMenu2 = GetComponent<AddedAndChangeScriptMenu2>();
+
+           
             /*
             Button newButton = newMenuItem.GetComponent<Button>();
             if (newButton != null) {
@@ -306,16 +312,12 @@ public class AddedAndChangeScriptMenu2 : MonoBehaviour {
         //btnItems.onClick.RemoveAllListeners();
 
         // سپس لیسنرهای جدید را اضافه کنید
-        btnCorrect.onClick.AddListener(() => OnCorrectClickBtn(btnCorrect));
-        btnNotCorrect.onClick.AddListener(() => OnNotCorrectClickBtn(btnNotCorrect));
+        btnCorrect.onClick.AddListener(() => OnCorrectClickBtn());
+        btnNotCorrect.onClick.AddListener(() => OnNotCorrectClickBtn());
         btnItems.onClick.AddListener(() => OnclickObjectsMenu(btnItems));
     }
 
-    public void OnCorrectClickBtn(Button sender) {
-        clickedButton = sender;
-        btnCorrect = sender;
-        Debug.Log($"Correct button clicked: {btnCorrect.name}");
-        // مقداردهی مجدد دکمه‌ها
+    public void OnCorrectClickBtn() {
         RefreshButtonListeners();
 
         foreach (GameObject obj in addedObjs) {
@@ -344,11 +346,7 @@ public class AddedAndChangeScriptMenu2 : MonoBehaviour {
         isToggled = false;
     }
 
-    public void OnNotCorrectClickBtn(Button sender) {
-        clickedButton = sender;
-        btnNotCorrect = sender;
-        Debug.Log($"Not Correct button clicked: {btnNotCorrect.name}");
-        // مقداردهی مجدد دکمه‌ها
+    public void OnNotCorrectClickBtn() {
         RefreshButtonListeners();
 
         foreach (GameObject obj in addedObjs) {
