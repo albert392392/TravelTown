@@ -4149,7 +4149,7 @@ GameObject:
   - component: {fileID: 4655963512392106006}
   - component: {fileID: 8257184209438435032}
   - component: {fileID: 1384483219779030640}
-  - component: {fileID: 8661299729161435288}
+  - component: {fileID: 8661299729161435289}
   m_Layer: 5
   m_Name: Not Correct
   m_TagString: Untagged
@@ -4406,7 +4406,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1087930466947630515}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 6352738884082265896}
+        m_TargetAssemblyTypeName: ObjectMenuClickButton, Assembly-CSharp
+        m_MethodName: OnCorrectClick
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &2260232434742124984
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5498,14 +5510,13 @@ MonoBehaviour:
   m_GameObject: {fileID: 2179394660398343484}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 620a15fa2d2ef134bbc9c2b000d19b17, type: 3}
+  m_Script: {fileID: 11500000, guid: 5273d557ad6af5b42bd28c12b5b81902, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   btnCorrect: {fileID: 2226229441990395433}
   btnNotCorrect: {fileID: 8257184209438435032}
-  btnItems: {fileID: 0}
   addedAndChangeScriptMenu: {fileID: 0}
-  AddedAndChangeScriptMenu2: {fileID: 0}
+  addedAndChangeScriptMenu2: {fileID: 0}
 --- !u!114 &6403599999649161754
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6235,7 +6246,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 4655963512392106006}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 8661299729161435289}
+        m_TargetAssemblyTypeName: ObjectMenuClickButton, Assembly-CSharp
+        m_MethodName: OnNotCorrectClick
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!1 &8343868922002876058
 GameObject:
   m_ObjectHideFlags: 0
@@ -6312,7 +6335,7 @@ RectTransform:
   m_AnchoredPosition: {x: -0.000011444092, y: 0.0000038146973}
   m_SizeDelta: {x: -0.0000076294, y: -0.0000076294}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!114 &8661299729161435288
+--- !u!114 &8661299729161435289
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -6321,14 +6344,13 @@ MonoBehaviour:
   m_GameObject: {fileID: 1630260551689040182}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 620a15fa2d2ef134bbc9c2b000d19b17, type: 3}
+  m_Script: {fileID: 11500000, guid: 5273d557ad6af5b42bd28c12b5b81902, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   btnCorrect: {fileID: 2226229441990395433}
   btnNotCorrect: {fileID: 8257184209438435032}
-  btnItems: {fileID: 0}
   addedAndChangeScriptMenu: {fileID: 0}
-  AddedAndChangeScriptMenu2: {fileID: 0}
+  addedAndChangeScriptMenu2: {fileID: 0}
 --- !u!224 &8769099882954700686
 RectTransform:
   m_ObjectHideFlags: 0

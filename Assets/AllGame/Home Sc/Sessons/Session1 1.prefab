@@ -5706,38 +5706,33 @@ MonoBehaviour:
   - {fileID: 1211597585484940659}
   - {fileID: 8447784489724287166}
   - {fileID: 255936824810549287}
-  fadeSpeed: 0.5
+  objectMenu: {fileID: 5985189208375278456, guid: 90860bf78366ab341a1592c463e2aafe, type: 3}
+  scrollBarMenu: {fileID: 0}
   btnCorrect: {fileID: 0}
   btnNotCorrect: {fileID: 0}
   btnItems: {fileID: 0}
-  scrollBarMenu: {fileID: 0}
   buttonMenuScrollChoose: {fileID: 0}
   objectMenuScrollBarChoose: {fileID: 0}
-  objectMenu: {fileID: 5985189208375278456, guid: 90860bf78366ab341a1592c463e2aafe, type: 3}
-  clickedButton: {fileID: 0}
-  previousColor: {r: 1, g: 1, b: 1, a: 1}
   currentColor: {r: 1, g: 1, b: 1, a: 1}
-  previousSprite: {fileID: 21300000, guid: 897bac50e6e5b594ead0fb3246026077, type: 3}
+  previousColor: {r: 1, g: 1, b: 1, a: 1}
   currentSprite: {fileID: 21300000, guid: 897bac50e6e5b594ead0fb3246026077, type: 3}
-  isIncreasing: 0
-  playfunction: 0
-  isToggled: 0
-  isObjectActive: 0
+  previousSprite: {fileID: 21300000, guid: 897bac50e6e5b594ead0fb3246026077, type: 3}
   addedChangeKey: AddedAndChangeScriptMenuIsObjectActive3
   currentSpriteKey: ActiveAddedAndChangeScriptMenu_CurrentObjectSprite3
   currentColorKey: ActiveAddedAndChangeScriptMenu_CurrentObjectColor3
   previousSpriteKey: ActiveAddedAndChangeScriptMenu_PreviousObjectSprite3
   previousColorKey: ActiveAddedAndChangeScriptMenu_PreviousObjectColor3
-  objectMenuAdderClick: []
-  objectMenuItem:
+  fadeSpeed: 0.5
+  objectMenuItems:
   - sprite: {fileID: 21300000, guid: 897bac50e6e5b594ead0fb3246026077, type: 3}
     color: {r: 1, g: 0, b: 0, a: 1}
   - sprite: {fileID: 21300000, guid: 897bac50e6e5b594ead0fb3246026077, type: 3}
-    color: {r: 0.11372566, g: 1, b: 0, a: 1}
+    color: {r: 0.12896562, g: 1, b: 0, a: 1}
   - sprite: {fileID: 21300000, guid: 897bac50e6e5b594ead0fb3246026077, type: 3}
-    color: {r: 1, g: 0, b: 0.81981754, a: 1}
+    color: {r: 1, g: 0.6487925, b: 0, a: 1}
   - sprite: {fileID: 21300000, guid: 897bac50e6e5b594ead0fb3246026077, type: 3}
-    color: {r: 0, g: 1, b: 0.9636197, a: 1}
+    color: {r: 0.32099622, g: 0.013207495, b: 1, a: 1}
+  isObjectActive: 0
 --- !u!1 &1369294628458803041
 GameObject:
   m_ObjectHideFlags: 0
@@ -10789,37 +10784,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a751b442756983c4f89feecb9a51918b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  addedObjs:
-  - {fileID: 2724286914354717266}
-  unableObjs:
-  - {fileID: 1211597585484940659}
-  - {fileID: 8447784489724287166}
-  - {fileID: 255936824810549287}
-  fadeSpeed: 0.5
-  btnCorrect: {fileID: 0}
-  btnNotCorrect: {fileID: 0}
-  btnItems: {fileID: 0}
-  scrollBarMenu: {fileID: 0}
-  buttonMenuScrollChoose: {fileID: 0}
-  objectMenuScrollBarChoose: {fileID: 0}
   handleObjectClick: {fileID: 0}
   choosePanel4: {fileID: 0}
-  objectMenu: {fileID: 5985189208375278456, guid: 90860bf78366ab341a1592c463e2aafe, type: 3}
   clickedButton: {fileID: 0}
-  previousColor: {r: 1, g: 1, b: 1, a: 1}
-  currentColor: {r: 1, g: 1, b: 1, a: 1}
-  previousSprite: {fileID: 21300000, guid: 12d52e5ab5830624d9c3667c7b470779, type: 3}
-  currentSprite: {fileID: 21300000, guid: 12d52e5ab5830624d9c3667c7b470779, type: 3}
   isIncreasing: 0
   playfunction: 0
-  isToggled: 0
   isObjectActive: 0
-  addedChangeKey: DraggableObjectCustomizerIsObjectActive3
-  currentSpriteKey: MotherCurrentSprite3
-  currentColorKey: MotherCurrentColor3
-  previousSpriteKey: MotherPreviousSprite3
-  previousColorKey: MotherPreviousColor3
-  objectMenuAdderClick: []
   objectMenuItem:
   - sprite: {fileID: 21300000, guid: 12d52e5ab5830624d9c3667c7b470779, type: 3}
     color: {r: 1, g: 0, b: 0, a: 1}
@@ -10830,6 +10800,38 @@ MonoBehaviour:
   - sprite: {fileID: 21300000, guid: 12d52e5ab5830624d9c3667c7b470779, type: 3}
     color: {r: 0.32099622, g: 0.013207495, b: 1, a: 1}
   isDraggingFromCustomizer: 0
+  addedObjs:
+  - {fileID: 2724286914354717266}
+  unableObjs:
+  - {fileID: 1211597585484940659}
+  - {fileID: 8447784489724287166}
+  - {fileID: 255936824810549287}
+  objectMenu: {fileID: 5985189208375278456, guid: 90860bf78366ab341a1592c463e2aafe, type: 3}
+  scrollBarMenu: {fileID: 0}
+  btnCorrect: {fileID: 0}
+  btnNotCorrect: {fileID: 0}
+  btnItems: {fileID: 0}
+  buttonMenuScrollChoose: {fileID: 0}
+  objectMenuScrollBarChoose: {fileID: 0}
+  currentColor: {r: 1, g: 1, b: 1, a: 1}
+  previousColor: {r: 1, g: 1, b: 1, a: 1}
+  currentSprite: {fileID: 21300000, guid: 12d52e5ab5830624d9c3667c7b470779, type: 3}
+  previousSprite: {fileID: 21300000, guid: 12d52e5ab5830624d9c3667c7b470779, type: 3}
+  addedChangeKey: DraggableObjectCustomizerIsObjectActive3
+  currentSpriteKey: MotherCurrentSprite3
+  currentColorKey: MotherCurrentColor3
+  previousSpriteKey: MotherPreviousSprite3
+  previousColorKey: MotherPreviousColor3
+  fadeSpeed: 0.5
+  objectMenuItems:
+  - sprite: {fileID: 21300000, guid: 12d52e5ab5830624d9c3667c7b470779, type: 3}
+    color: {r: 1, g: 0, b: 0, a: 1}
+  - sprite: {fileID: 21300000, guid: 12d52e5ab5830624d9c3667c7b470779, type: 3}
+    color: {r: 0.12896562, g: 1, b: 0, a: 1}
+  - sprite: {fileID: 21300000, guid: 12d52e5ab5830624d9c3667c7b470779, type: 3}
+    color: {r: 1, g: 0.6487925, b: 0, a: 1}
+  - sprite: {fileID: 21300000, guid: 12d52e5ab5830624d9c3667c7b470779, type: 3}
+    color: {r: 0.32099622, g: 0.013207495, b: 1, a: 1}
 --- !u!1 &2781087376249471874
 GameObject:
   m_ObjectHideFlags: 0
@@ -22765,37 +22767,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a751b442756983c4f89feecb9a51918b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  addedObjs:
-  - {fileID: 6025512615875714273}
-  unableObjs:
-  - {fileID: 3791524006942524180}
-  - {fileID: 6682141403081755284}
-  - {fileID: 528331432261442549}
-  fadeSpeed: 0.5
-  btnCorrect: {fileID: 0}
-  btnNotCorrect: {fileID: 0}
-  btnItems: {fileID: 0}
-  scrollBarMenu: {fileID: 0}
-  buttonMenuScrollChoose: {fileID: 0}
-  objectMenuScrollBarChoose: {fileID: 0}
   handleObjectClick: {fileID: 0}
   choosePanel4: {fileID: 0}
-  objectMenu: {fileID: 5985189208375278456, guid: 90860bf78366ab341a1592c463e2aafe, type: 3}
   clickedButton: {fileID: 0}
-  previousColor: {r: 1, g: 1, b: 1, a: 1}
-  currentColor: {r: 1, g: 1, b: 1, a: 1}
-  previousSprite: {fileID: 21300000, guid: 12d52e5ab5830624d9c3667c7b470779, type: 3}
-  currentSprite: {fileID: 21300000, guid: 12d52e5ab5830624d9c3667c7b470779, type: 3}
   isIncreasing: 0
   playfunction: 0
-  isToggled: 0
   isObjectActive: 0
-  addedChangeKey: DraggableObjectCustomizerIsObjectActive2
-  currentSpriteKey: MotherCurrentSprite2
-  currentColorKey: MotherCurrentColor2
-  previousSpriteKey: MotherPreviousSprite2
-  previousColorKey: MotherPreviousColor2
-  objectMenuAdderClick: []
   objectMenuItem:
   - sprite: {fileID: 21300000, guid: 12d52e5ab5830624d9c3667c7b470779, type: 3}
     color: {r: 1, g: 0, b: 0, a: 1}
@@ -22806,6 +22783,38 @@ MonoBehaviour:
   - sprite: {fileID: 21300000, guid: 12d52e5ab5830624d9c3667c7b470779, type: 3}
     color: {r: 0.32099622, g: 0.013207495, b: 1, a: 1}
   isDraggingFromCustomizer: 0
+  addedObjs:
+  - {fileID: 6025512615875714273}
+  unableObjs:
+  - {fileID: 3791524006942524180}
+  - {fileID: 6682141403081755284}
+  - {fileID: 528331432261442549}
+  objectMenu: {fileID: 5985189208375278456, guid: 90860bf78366ab341a1592c463e2aafe, type: 3}
+  scrollBarMenu: {fileID: 0}
+  btnCorrect: {fileID: 0}
+  btnNotCorrect: {fileID: 0}
+  btnItems: {fileID: 0}
+  buttonMenuScrollChoose: {fileID: 0}
+  objectMenuScrollBarChoose: {fileID: 0}
+  currentColor: {r: 1, g: 1, b: 1, a: 1}
+  previousColor: {r: 1, g: 1, b: 1, a: 1}
+  currentSprite: {fileID: 21300000, guid: 12d52e5ab5830624d9c3667c7b470779, type: 3}
+  previousSprite: {fileID: 21300000, guid: 12d52e5ab5830624d9c3667c7b470779, type: 3}
+  addedChangeKey: DraggableObjectCustomizerIsObjectActive2
+  currentSpriteKey: MotherCurrentSprite2
+  currentColorKey: MotherCurrentColor2
+  previousSpriteKey: MotherPreviousSprite2
+  previousColorKey: MotherPreviousColor2
+  fadeSpeed: 0.5
+  objectMenuItems:
+  - sprite: {fileID: 21300000, guid: 12d52e5ab5830624d9c3667c7b470779, type: 3}
+    color: {r: 1, g: 0, b: 0, a: 1}
+  - sprite: {fileID: 21300000, guid: 12d52e5ab5830624d9c3667c7b470779, type: 3}
+    color: {r: 0.12896562, g: 1, b: 0, a: 1}
+  - sprite: {fileID: 21300000, guid: 12d52e5ab5830624d9c3667c7b470779, type: 3}
+    color: {r: 1, g: 0.6487925, b: 0, a: 1}
+  - sprite: {fileID: 21300000, guid: 12d52e5ab5830624d9c3667c7b470779, type: 3}
+    color: {r: 0.32099622, g: 0.013207495, b: 1, a: 1}
 --- !u!1 &6025741094489725170
 GameObject:
   m_ObjectHideFlags: 0
@@ -26171,38 +26180,33 @@ MonoBehaviour:
   - {fileID: 3791524006942524180}
   - {fileID: 6682141403081755284}
   - {fileID: 528331432261442549}
-  fadeSpeed: 0.5
+  objectMenu: {fileID: 5985189208375278456, guid: 90860bf78366ab341a1592c463e2aafe, type: 3}
+  scrollBarMenu: {fileID: 0}
   btnCorrect: {fileID: 0}
   btnNotCorrect: {fileID: 0}
   btnItems: {fileID: 0}
-  scrollBarMenu: {fileID: 0}
   buttonMenuScrollChoose: {fileID: 0}
   objectMenuScrollBarChoose: {fileID: 0}
-  objectMenu: {fileID: 5985189208375278456, guid: 90860bf78366ab341a1592c463e2aafe, type: 3}
-  clickedButton: {fileID: 0}
-  previousColor: {r: 1, g: 1, b: 1, a: 1}
   currentColor: {r: 1, g: 1, b: 1, a: 1}
-  previousSprite: {fileID: 21300000, guid: 897bac50e6e5b594ead0fb3246026077, type: 3}
+  previousColor: {r: 1, g: 1, b: 1, a: 1}
   currentSprite: {fileID: 21300000, guid: 897bac50e6e5b594ead0fb3246026077, type: 3}
-  isIncreasing: 0
-  playfunction: 0
-  isToggled: 0
-  isObjectActive: 0
+  previousSprite: {fileID: 21300000, guid: 897bac50e6e5b594ead0fb3246026077, type: 3}
   addedChangeKey: AddedAndChangeScriptMenuIsObjectActive2
   currentSpriteKey: ActiveAddedAndChangeScriptMenu_CurrentObjectSprite2
   currentColorKey: ActiveAddedAndChangeScriptMenu_CurrentObjectColor2
   previousSpriteKey: ActiveAddedAndChangeScriptMenu_PreviousObjectSprite2
   previousColorKey: ActiveAddedAndChangeScriptMenu_PreviousObjectColor2
-  objectMenuAdderClick: []
-  objectMenuItem:
+  fadeSpeed: 0.5
+  objectMenuItems:
   - sprite: {fileID: 21300000, guid: 897bac50e6e5b594ead0fb3246026077, type: 3}
     color: {r: 1, g: 0, b: 0, a: 1}
   - sprite: {fileID: 21300000, guid: 897bac50e6e5b594ead0fb3246026077, type: 3}
-    color: {r: 0.11372566, g: 1, b: 0, a: 1}
+    color: {r: 0.12896562, g: 1, b: 0, a: 1}
   - sprite: {fileID: 21300000, guid: 897bac50e6e5b594ead0fb3246026077, type: 3}
-    color: {r: 1, g: 0, b: 0.81981754, a: 1}
+    color: {r: 1, g: 0.6487925, b: 0, a: 1}
   - sprite: {fileID: 21300000, guid: 897bac50e6e5b594ead0fb3246026077, type: 3}
-    color: {r: 0, g: 1, b: 0.9636197, a: 1}
+    color: {r: 0.32099622, g: 0.013207495, b: 1, a: 1}
+  isObjectActive: 0
 --- !u!1 &6929840041333515460
 GameObject:
   m_ObjectHideFlags: 0
@@ -26716,38 +26720,33 @@ MonoBehaviour:
   - {fileID: 4851126121666485064}
   - {fileID: 3325709138280841322}
   - {fileID: 8431501213189818334}
-  fadeSpeed: 0.5
+  objectMenu: {fileID: 5985189208375278456, guid: 90860bf78366ab341a1592c463e2aafe, type: 3}
+  scrollBarMenu: {fileID: 0}
   btnCorrect: {fileID: 0}
   btnNotCorrect: {fileID: 0}
   btnItems: {fileID: 0}
-  scrollBarMenu: {fileID: 0}
   buttonMenuScrollChoose: {fileID: 0}
   objectMenuScrollBarChoose: {fileID: 0}
-  objectMenu: {fileID: 5985189208375278456, guid: 90860bf78366ab341a1592c463e2aafe, type: 3}
-  clickedButton: {fileID: 0}
-  previousColor: {r: 1, g: 1, b: 1, a: 1}
   currentColor: {r: 1, g: 1, b: 1, a: 1}
-  previousSprite: {fileID: 21300000, guid: 897bac50e6e5b594ead0fb3246026077, type: 3}
+  previousColor: {r: 1, g: 1, b: 1, a: 1}
   currentSprite: {fileID: 21300000, guid: 897bac50e6e5b594ead0fb3246026077, type: 3}
-  isIncreasing: 0
-  playfunction: 0
-  isToggled: 0
-  isObjectActive: 0
+  previousSprite: {fileID: 21300000, guid: 897bac50e6e5b594ead0fb3246026077, type: 3}
   addedChangeKey: AddedAndChangeScriptMenuIsObjectActive
   currentSpriteKey: ActiveAddedAndChangeScriptMenu_CurrentObjectSprite
   currentColorKey: ActiveAddedAndChangeScriptMenu_CurrentObjectColor
   previousSpriteKey: ActiveAddedAndChangeScriptMenu_PreviousObjectSprite
   previousColorKey: ActiveAddedAndChangeScriptMenu_PreviousObjectColor
-  objectMenuAdderClick: []
-  objectMenuItem:
+  fadeSpeed: 0.5
+  objectMenuItems:
   - sprite: {fileID: 21300000, guid: 897bac50e6e5b594ead0fb3246026077, type: 3}
     color: {r: 1, g: 0, b: 0, a: 1}
   - sprite: {fileID: 21300000, guid: 897bac50e6e5b594ead0fb3246026077, type: 3}
-    color: {r: 0.11372566, g: 1, b: 0, a: 1}
+    color: {r: 0.12896562, g: 1, b: 0, a: 1}
   - sprite: {fileID: 21300000, guid: 897bac50e6e5b594ead0fb3246026077, type: 3}
-    color: {r: 1, g: 0, b: 0.81981754, a: 1}
+    color: {r: 1, g: 0.6487925, b: 0, a: 1}
   - sprite: {fileID: 21300000, guid: 897bac50e6e5b594ead0fb3246026077, type: 3}
-    color: {r: 0, g: 1, b: 0.9636197, a: 1}
+    color: {r: 0.32099622, g: 0.013207495, b: 1, a: 1}
+  isObjectActive: 0
 --- !u!1 &7047684593600015981
 GameObject:
   m_ObjectHideFlags: 0
@@ -31134,37 +31133,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a751b442756983c4f89feecb9a51918b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  addedObjs:
-  - {fileID: 8194306897250258331}
-  unableObjs:
-  - {fileID: 4851126121666485064}
-  - {fileID: 3325709138280841322}
-  - {fileID: 8431501213189818334}
-  fadeSpeed: 0.5
-  btnCorrect: {fileID: 0}
-  btnNotCorrect: {fileID: 0}
-  btnItems: {fileID: 0}
-  scrollBarMenu: {fileID: 0}
-  buttonMenuScrollChoose: {fileID: 0}
-  objectMenuScrollBarChoose: {fileID: 0}
   handleObjectClick: {fileID: 0}
   choosePanel4: {fileID: 0}
-  objectMenu: {fileID: 5985189208375278456, guid: 90860bf78366ab341a1592c463e2aafe, type: 3}
   clickedButton: {fileID: 0}
-  previousColor: {r: 1, g: 1, b: 1, a: 1}
-  currentColor: {r: 1, g: 1, b: 1, a: 1}
-  previousSprite: {fileID: 21300000, guid: 12d52e5ab5830624d9c3667c7b470779, type: 3}
-  currentSprite: {fileID: 21300000, guid: 12d52e5ab5830624d9c3667c7b470779, type: 3}
   isIncreasing: 0
   playfunction: 0
-  isToggled: 0
   isObjectActive: 0
-  addedChangeKey: DraggableObjectCustomizerIsObjectActive
-  currentSpriteKey: MotherCurrentSprite
-  currentColorKey: MotherCurrentColor
-  previousSpriteKey: MotherPreviousSprite
-  previousColorKey: MotherPreviousColor
-  objectMenuAdderClick: []
   objectMenuItem:
   - sprite: {fileID: 21300000, guid: 12d52e5ab5830624d9c3667c7b470779, type: 3}
     color: {r: 1, g: 0, b: 0, a: 1}
@@ -31175,6 +31149,38 @@ MonoBehaviour:
   - sprite: {fileID: 21300000, guid: 12d52e5ab5830624d9c3667c7b470779, type: 3}
     color: {r: 0.32099622, g: 0.013207495, b: 1, a: 1}
   isDraggingFromCustomizer: 0
+  addedObjs:
+  - {fileID: 8194306897250258331}
+  unableObjs:
+  - {fileID: 4851126121666485064}
+  - {fileID: 3325709138280841322}
+  - {fileID: 8431501213189818334}
+  objectMenu: {fileID: 5985189208375278456, guid: 90860bf78366ab341a1592c463e2aafe, type: 3}
+  scrollBarMenu: {fileID: 0}
+  btnCorrect: {fileID: 0}
+  btnNotCorrect: {fileID: 0}
+  btnItems: {fileID: 0}
+  buttonMenuScrollChoose: {fileID: 0}
+  objectMenuScrollBarChoose: {fileID: 0}
+  currentColor: {r: 1, g: 1, b: 1, a: 1}
+  previousColor: {r: 1, g: 1, b: 1, a: 1}
+  currentSprite: {fileID: 21300000, guid: 12d52e5ab5830624d9c3667c7b470779, type: 3}
+  previousSprite: {fileID: 21300000, guid: 12d52e5ab5830624d9c3667c7b470779, type: 3}
+  addedChangeKey: DraggableObjectCustomizerIsObjectActive
+  currentSpriteKey: MotherCurrentSprite
+  currentColorKey: MotherCurrentColor
+  previousSpriteKey: MotherPreviousSprite
+  previousColorKey: MotherPreviousColor
+  fadeSpeed: 0.5
+  objectMenuItems:
+  - sprite: {fileID: 21300000, guid: 12d52e5ab5830624d9c3667c7b470779, type: 3}
+    color: {r: 1, g: 0, b: 0, a: 1}
+  - sprite: {fileID: 21300000, guid: 12d52e5ab5830624d9c3667c7b470779, type: 3}
+    color: {r: 0.12896562, g: 1, b: 0, a: 1}
+  - sprite: {fileID: 21300000, guid: 12d52e5ab5830624d9c3667c7b470779, type: 3}
+    color: {r: 1, g: 0.6487925, b: 0, a: 1}
+  - sprite: {fileID: 21300000, guid: 12d52e5ab5830624d9c3667c7b470779, type: 3}
+    color: {r: 0.32099622, g: 0.013207495, b: 1, a: 1}
 --- !u!61 &7730338811485859803
 BoxCollider2D:
   m_ObjectHideFlags: 0

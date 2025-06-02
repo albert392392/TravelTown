@@ -1,480 +1,281 @@
-﻿using System.Collections;
+﻿// نسخه نهایی کامل‌شده برای اسکریپت AddedAndChangeScriptMenu2
+
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
 public class AddedAndChangeScriptMenu2 : MonoBehaviour {
-    public GameObject[] addedObjs; // لیست آبجکت‌ها
+    [Header("Object References")]
+    public GameObject[] addedObjs;
     public GameObject[] unableObjs;
-    public float fadeSpeed = 0.5f; // سرعت تغییر شفافیت
+    public GameObject objectMenu;
+    public GameObject scrollBarMenu;
+
+    [Header("Buttons")]
     public Button btnCorrect;
     public Button btnNotCorrect;
     public Button btnItems;
-    public GameObject scrollBarMenu;
+
+    [Header("UI & Managers")]
     public ButtonMenuScrollChoose buttonMenuScrollChoose;
     public ObjectMenuScrollBarChoose objectMenuScrollBarChoose;
-    public GameObject objectMenu;
-    // private bool canvasEnable;
-    public Button clickedButton; // دکمه‌ای که کلیک شده
-    private bool previousObjectActiveState = true; // ذخیره وضعیت قبلی isObjectActive
-    public Color previousColor; // ذخیره رنگ قبلی برای بازگردانی
+
+    [Header("Visual State")]
     public Color currentColor;
-
-    public Sprite previousSprite;
+    public Color previousColor;
     public Sprite currentSprite;
+    public Sprite previousSprite;
 
-    [SerializeField] private bool isIncreasing = true; // حالت تغییر مقدار ترنسپرنتی (افزایش یا کاهش)
-    public bool playfunction;
-    private bool playfunctionTransparenty;
-    public bool isToggled = false; // متغیر برای مدیریت حالت کلیک‌ها
-    private bool isTouched;
-    public bool isObjectActive;
-
+    [Header("Keys for Persistence")]
     public string addedChangeKey;
     public string currentSpriteKey;
     public string currentColorKey;
     public string previousSpriteKey;
     public string previousColorKey;
-    private float touchStartTime;
 
-    private MoveWhenPanelStartedManager moveWhenPanelStartedManager;
-   // public List<ObjectMenuAdderClick> objectMenuAdderClick;
-    [SerializeField] private List<ObjectMenuItem> objectMenuItem;
-    /*
-    private void Awake() {
-        objectMenuScrollBarChoose = FindAnyObjectByType<ObjectMenuScrollBarChoose>();
-        objectMenu = objectMenuScrollBarChoose.objectMenu;
-    }*/
+    [Header("Fade Settings")]
+    public float fadeSpeed = 0.5f;
+
+    [SerializeField] private List<ObjectMenuItem> objectMenuItems;
+    private MoveWhenPanelStartedManager moveManager;
+
+    private bool isToggled;
+    private bool playFadeInOut;
+    private bool playFullOpaque;
+    private bool isIncreasing = true;
+    private float touchStartTime;
+    private Button clickedButton;
+
+    public bool isObjectActive;
+    private bool wasPreviouslyActive = true;
 
     private void Start() {
+        InitializeManagers();
+        LoadSavedState();
+        ApplyInitialVisuals();
+    }
 
-        moveWhenPanelStartedManager = FindAnyObjectByType<MoveWhenPanelStartedManager>();
+    private void Update() {
+        if (isObjectActive != wasPreviouslyActive) {
+            SetActiveState(isObjectActive);
+            wasPreviouslyActive = isObjectActive;
+        }
+        HandleTouchInput();
+        if (playFadeInOut) FadeInOutLoop();
+        if (playFullOpaque) ApplyFullOpacity();
+    }
+
+    private void InitializeManagers() {
+        moveManager = FindAnyObjectByType<MoveWhenPanelStartedManager>();
         buttonMenuScrollChoose = UiManagerMosque.instance.ButtonMenuScrollChoose;
         objectMenuScrollBarChoose = UiManagerMosque.instance.menuScrollBarChoose;
-        btnCorrect = UiManagerMosque.instance.ButtonMenuScrollChoose.correctButton;
-        btnNotCorrect = UiManagerMosque.instance.ButtonMenuScrollChoose.notCorrectButton;
+        btnCorrect = buttonMenuScrollChoose.correctButton;
+        btnNotCorrect = buttonMenuScrollChoose.notCorrectButton;
+    }
 
-        // scrollBarMenu.gameObject.SetActive(false);
-        playfunction = false;
-        if (PlayerPrefs.HasKey(addedChangeKey)) { // بررسی وجود مقدار
-            isObjectActive = PlayerPrefs.GetInt(addedChangeKey) == 1; // مقداردهی مجدد
+    private void LoadSavedState() {
+        if (PlayerPrefs.HasKey(addedChangeKey)) {
+            isObjectActive = PlayerPrefs.GetInt(addedChangeKey) == 1;
         }
-
         currentColor = LoadColor(currentColorKey, currentColor);
         previousColor = LoadColor(previousColorKey, previousColor);
-
         currentSprite = LoadSprite(currentSpriteKey, currentSprite);
         previousSprite = LoadSprite(previousSpriteKey, previousSprite);
-
-        // 🔹 اعمال رنگ و اسپرایت ذخیره‌شده روی تمام `addedObjs`
-        foreach (GameObject obj in addedObjs) {
-            if (obj != null) {
-                SpriteRenderer spriteRenderer = obj.GetComponent<SpriteRenderer>();
-                if (spriteRenderer != null) {
-                    spriteRenderer.color = currentColor;
-                    if (currentSprite != null) {
-                        spriteRenderer.sprite = currentSprite;
-                    }
-                }
-            }
-        }
-
-        /*
-        foreach (GameObject obj in addedObjs) {
-            if (obj.GetComponent<DraggableObjectCustomizer>() != null && obj.GetComponent<DraggableObjectCustomizer>().) {
-                var draggbleObj = obj.gameObject.GetComponent<AddedAndChangeScriptMenu>();
-                if (draggbleObj != null) {
-                    draggbleObj.enabled = false;
-                }
-            }
-        }*/
-        /*
-        if (PlayerPrefs.HasKey("isObjectActiveAddedAndChangeScriptMenu_CanvasEnable")) { // بررسی وجود مقدار
-            canvasEnable = PlayerPrefs.GetInt("isObjectActiveAddedAndChangeScriptMenu_CanvasEnable") == 1; // مقداردهی مجدد
-        }*/
     }
-    private void Update() {
-        // فقط زمانی که مقدار isObjectActive تغییر کند، ToggleComponents فراخوانی شود  
-        if (isObjectActive != previousObjectActiveState) {
-            SetActiveState(isObjectActive);
-            previousObjectActiveState = isObjectActive;
-        }
 
-        CheckClickOrTouchOnObjects();
-
-        if (playfunction) {
-            ChangeTransParentyInLoop();
-        }
-
-        if (playfunctionTransparenty) {
-            FullTransparenty();
+    private void ApplyInitialVisuals() {
+        foreach (var obj in addedObjs) {
+            if (obj.TryGetComponent<SpriteRenderer>(out var sr)) {
+                sr.color = currentColor;
+                sr.sprite = currentSprite;
+            }
         }
     }
 
     private void SetActiveState(bool isActive) {
-        ToggleComponents(this.gameObject, isActive);
+        foreach (var obj in addedObjs) ToggleComponentsRecursively(obj, isActive);
     }
-    private void ToggleComponents(GameObject obj, bool isActive) {
-        // فعال یا غیرفعال کردن SpriteRenderer
-        SpriteRenderer spriteRenderer = obj.GetComponent<SpriteRenderer>();
-        if (spriteRenderer != null) {
-            spriteRenderer.enabled = isActive;
-        }
-        
-        Collider collider = obj.GetComponent<Collider>();
-        if (collider != null) {
-            collider.enabled = isActive;
-        }
-        Collider2D collider2D = obj.GetComponent<Collider2D>();
-        if (collider2D != null) {
-            collider2D.enabled = isActive;
-        }
-        // فعال یا غیرفعال کردن Rigidbody
-        Rigidbody2D rb2D = obj.GetComponent<Rigidbody2D>();
-        if (rb2D != null) {
-            rb2D.simulated = isActive;
-        }
 
-        Rigidbody rb = obj.GetComponent<Rigidbody>();
-        if (rb != null) {
-            rb.isKinematic = !isActive;
-        }
+    private void ToggleComponentsRecursively(GameObject obj, bool isActive) {
+        var sr = obj.GetComponent<SpriteRenderer>();
+        if (sr != null) sr.enabled = isActive;
 
-        foreach (Transform child in obj.transform) {
-            ToggleComponents(child.gameObject, isActive);
-        }
+        if (obj.TryGetComponent(out Collider col)) col.enabled = isActive;
+        if (obj.TryGetComponent(out Collider2D col2D)) col2D.enabled = isActive;
+        if (obj.TryGetComponent(out Rigidbody2D rb2D)) rb2D.simulated = isActive;
+        if (obj.TryGetComponent(out Rigidbody rb)) rb.isKinematic = !isActive;
+
+        foreach (Transform child in obj.transform) ToggleComponentsRecursively(child.gameObject, isActive);
     }
-    private void ChangeTransParentyInLoop() {
-        // حلقه‌ای برای عبور از تمام آبجکت‌ها در لیست
-        foreach (GameObject obj in addedObjs) {
-            if (obj != null) {
-                SpriteRenderer sprite = obj.GetComponent<SpriteRenderer>();
-                if (sprite != null) {
-                    Color color = sprite.color;
 
-                    // افزایش یا کاهش مقدار شفافیت بر اساس حالت
-                    if (isIncreasing) {
-                        color.a += fadeSpeed * Time.deltaTime;
-                        if (color.a >= 1f) { // مقدار 1f معادل شفافیت 255 است
-                            color.a = 1f;
-                            isIncreasing = false; // تغییر حالت به کاهش
-                        }
-                    }
-                    else {
-                        color.a -= fadeSpeed * Time.deltaTime;
-                        if (color.a <= 0.47f) { // مقدار 0.47f معادل شفافیت 120 است
-                            color.a = 0.47f;
-                            isIncreasing = true; // تغییر حالت به افزایش
-                        }
-                    }
-
-                    // اعمال مقدار جدید به رنگ
-                    sprite.color = color;
+    private void HandleTouchInput() {
+        if (Input.touchCount > 0 && Input.GetTouch(0).phase == TouchPhase.Ended) {
+            if (EventSystem.current.IsPointerOverGameObject(Input.GetTouch(0).fingerId)) return;
+            var hit = Physics2D.Raycast(Camera.main.ScreenToWorldPoint(Input.GetTouch(0).position), Vector2.zero);
+            if (hit.collider == null) return;
+            foreach (var obj in addedObjs) {
+                if (hit.collider.gameObject == obj) {
+                    HandleObjectClick();
+                    return;
                 }
             }
         }
     }
 
-    private void CheckClickOrTouchOnObjects() {
-        if (Input.touchCount > 0) {
-            Touch touch = Input.GetTouch(0);
-
-            if (EventSystem.current.IsPointerOverGameObject(touch.fingerId)) return;
-
-            if (touch.phase == TouchPhase.Began) {
-
-                touchStartTime = Time.time;
-            }
-            if (touch.phase == TouchPhase.Ended) {
-                float touchDuration = Time.time - touchStartTime;
-
-                if (touchDuration < 0.3f) {
-                    Vector2 touchPosition = Camera.main.ScreenToWorldPoint(touch.position);
-                    RaycastHit2D hit = Physics2D.Raycast(touchPosition, Vector2.zero);
-
-                    if (hit.collider != null) {
-                        foreach (GameObject obj in addedObjs) {
-                            if (hit.collider.gameObject == obj) {
-                                touchDuration = 0;
-                                touchStartTime = 0;
-                                HandleObjectClick(obj);
-                                break;
-                            }
-                            else if (hit.collider.gameObject != obj && isTouched) {
-                                playfunctionTransparenty = true;
-                                playfunction = false;
-                                OnableObjsTransparenty();
-                                FullTransparenty();
-                                moveWhenPanelStartedManager.isStartMove = false;
-                                moveWhenPanelStartedManager.isMoveToFirst = true;
-                                isToggled = false;
-                            }
-                        }
-                    }
-                }
-            }
-        }
-    }
-    private void HandleObjectClick(GameObject obj) {
-       // isTouched = true;
+    private void HandleObjectClick() {
         if (!isToggled) {
-            // objectMenuAdderClick.addedAndChangeScriptMenu = GetComponent<AddedAndChangeScriptMenu>();
-            RequestTothePanelChooseObjectAdd();
-            playfunctionTransparenty = false;
-            playfunction = true;
-            //ChangeTransParentyInLoop();
-            UnableObjsTransparenty();
-            foreach (ObjectMenuAdderClick objMenuAdder in FindObjectsOfType<ObjectMenuAdderClick>()) {
-                objMenuAdder.AddedAndChangeScriptMenu2 = GetComponent<AddedAndChangeScriptMenu2>();
-            }
-            //scrollBarMenu = FindAnyObjectByType<scroll_Into>().gameObject;
-            //moveWhenPanelStartedManager.ScrollBar = scrollBarMenu.gameObject;
-            moveWhenPanelStartedManager.isStartMove = true;
-            moveWhenPanelStartedManager.isMoveToFirst = false;
-            isToggled = true;
+            AssignToMenuItems();
+            playFadeInOut = true;
+            playFullOpaque = false;
+            FadeOutUnselected();
+            moveManager.isStartMove = true;
+            moveManager.isMoveToFirst = false;
+            btnCorrect.GetComponent<ObjectMenuClickButton>().addedAndChangeScriptMenu2 = this;
+            btnNotCorrect.GetComponent<ObjectMenuClickButton>().addedAndChangeScriptMenu2 = this;
         }
         else {
-        
-            playfunctionTransparenty = true;
-            playfunction = false;
-            OnableObjsTransparenty();
-            FullTransparenty();
-            moveWhenPanelStartedManager.isStartMove = false;
-            moveWhenPanelStartedManager.isMoveToFirst = true;
-            isToggled = false;
+            playFadeInOut = false;
+            playFullOpaque = true;
+            ResetUnselected();
+            SaveColor(currentColorKey, currentColor);
+            SaveSprite(currentSpriteKey, currentSprite);
+            moveManager.isStartMove = false;
+            moveManager.isMoveToFirst = true;
         }
-
-        // تغییر حالت isToggled
         isToggled = !isToggled;
     }
-    private void RequestTothePanelChooseObjectAdd() {
-        foreach (ObjectMenuItem objMenu in objectMenuItem) {
-            // ساخت آبجکت جدید
-            GameObject newMenuItem = Instantiate(objectMenu, objectMenuScrollBarChoose.transform);
 
-            // تغییرات روی تصویر دکمه جدید
-            Image imageComponent = newMenuItem.GetComponent<Image>();
-            if (imageComponent != null) {
-                objMenu.color.a = 255f; // تنظیم شفافیت رنگ
-                imageComponent.sprite = objMenu.sprite;
-                imageComponent.color = objMenu.color;
-            }
-
-            ObjectMenuAdderClick allMenuAdderClick = newMenuItem.GetComponent<ObjectMenuAdderClick>();
-            allMenuAdderClick.AddedAndChangeScriptMenu2 = GetComponent<AddedAndChangeScriptMenu2>();
-
-           
-            /*
-            Button newButton = newMenuItem.GetComponent<Button>();
-            if (newButton != null) {
-                newButton.onClick.RemoveAllListeners(); // حذف لیسنرهای قبلی
-                newButton.onClick.AddListener(() => OnclickObjectsMenu(newButton));
-            }*/
-        }
-    }
-
-    /*
-    private void ClearRequestPanelObjs() {
-        for (int i = 0; i < objectMenuScrollBarChoose.transform.childCount; i++) {
-             Destroy(objectMenuScrollBarChoose.transform.GetChild(i).gameObject);
-        }
-    }*/
-    private void UnableObjsTransparenty() {
-        foreach (GameObject obj in unableObjs) {
-            if (obj != null) {
-                SpriteRenderer sprite = obj.GetComponent<SpriteRenderer>();
-                if (sprite != null) {
-                    Color color = sprite.color;
-                    color.a = 0.6f; // مقدار شفافیت
-                    sprite.color = color;
-                }
+    private void FadeInOutLoop() {
+        foreach (var obj in addedObjs) {
+            if (obj.TryGetComponent<SpriteRenderer>(out var sr)) {
+                var color = sr.color;
+                color.a += (isIncreasing ? 1 : -1) * fadeSpeed * Time.deltaTime;
+                if (color.a >= 1f) { color.a = 1f; isIncreasing = false; }
+                else if (color.a <= 0.47f) { color.a = 0.47f; isIncreasing = true; }
+                sr.color = color;
             }
         }
     }
 
-    private void OnableObjsTransparenty() {
-        foreach (GameObject obj in unableObjs) {
-            if (obj != null) {
-                SpriteRenderer sprite = obj.GetComponent<SpriteRenderer>();
-                if (sprite != null) {
-                    Color color = sprite.color;
-                    color.a = 1f; // مقدار شفافیت نهایی
-                    sprite.color = color;
-                }
+    private void ApplyFullOpacity() {
+        foreach (var obj in addedObjs) {
+            if (obj.TryGetComponent<SpriteRenderer>(out var sr)) {
+                var color = sr.color;
+                color.a = Mathf.Min(color.a + fadeSpeed * Time.deltaTime, 1f);
+                sr.color = color;
             }
         }
     }
-    private void RefreshButtonListeners() {
-        // ابتدا لیسنرهای قدیمی را حذف کنید
-        btnCorrect.onClick.RemoveAllListeners();
-        btnNotCorrect.onClick.RemoveAllListeners();
-        //btnItems.onClick.RemoveAllListeners();
 
-        // سپس لیسنرهای جدید را اضافه کنید
-        btnCorrect.onClick.AddListener(() => OnCorrectClickBtn());
-        btnNotCorrect.onClick.AddListener(() => OnNotCorrectClickBtn());
-        btnItems.onClick.AddListener(() => OnclickObjectsMenu(btnItems));
+    private void FadeOutUnselected() {
+        foreach (var obj in unableObjs) {
+            if (obj.TryGetComponent<SpriteRenderer>(out var sr)) {
+                var color = sr.color;
+                color.a = 0.6f;
+                sr.color = color;
+            }
+        }
+    }
+
+    private void ResetUnselected() {
+        foreach (var obj in unableObjs) {
+            if (obj.TryGetComponent<SpriteRenderer>(out var sr)) {
+                var color = sr.color;
+                color.a = 1f;
+                sr.color = color;
+            }
+        }
+    }
+
+    private void AssignToMenuItems() {
+        foreach (var item in objectMenuItems) {
+            var newObj = Instantiate(objectMenu, objectMenuScrollBarChoose.transform);
+            if (newObj.TryGetComponent<Image>(out var img)) {
+                item.color.a = 1f;
+                img.sprite = item.sprite;
+                img.color = item.color;
+            }
+            if (newObj.TryGetComponent<ObjectMenuAdderClick>(out var adder)) {
+                adder.addedAndChangeScriptMenu2 = this;
+            }
+        }
     }
 
     public void OnCorrectClickBtn() {
-        RefreshButtonListeners();
+        previousColor = currentColor;
+        previousSprite = currentSprite;
+        SaveColor(previousColorKey, previousColor);
+        SaveSprite(previousSpriteKey, previousSprite);
+        GameObject go = btnItems.gameObject;
+        if (go.TryGetComponent<Image>(out var image)) {
+            currentColor = image.color;
+            currentSprite = image.sprite;
+            SaveColor(currentColorKey, currentColor);
+            SaveSprite(currentSpriteKey, currentSprite);
+        }
 
-        foreach (GameObject obj in addedObjs) {
-            if (obj != null) {
-                SpriteRenderer sprite = obj.GetComponent<SpriteRenderer>();
-                if (sprite != null) {
-                    SaveColorUnableObjects(obj, sprite.sprite, sprite.color);
-                    SaveCurrentState();
-                    previousSprite = currentSprite;
-                    previousColor = currentColor;
-                    playfunctionTransparenty = true;
-                    moveWhenPanelStartedManager.isStartMove = false;
-                    moveWhenPanelStartedManager.isMoveToFirst = true;
-                    FullTransparenty();
-                    /* var draggbleObj = obj.gameObject.GetComponent<AddedAndChangeScriptMenu>();
-                     if (draggbleObj != null) {
-                         draggbleObj.enabled = false;
-                     }*/
-                }
+        foreach (var obj in addedObjs) {
+            if (obj.TryGetComponent<SpriteRenderer>(out var sr)) {
+                sr.color = image.color;
+                sr.sprite = image.sprite;
             }
         }
 
-        playfunction = false;
-        OnableObjsTransparenty();
-        scrollBarMenu.SetActive(false);
-        isToggled = false;
+        playFadeInOut = false;
+        playFullOpaque = true;
+        ResetUnselected();
+        moveManager.isStartMove = false;
+        moveManager.isMoveToFirst = true;
     }
 
     public void OnNotCorrectClickBtn() {
-        RefreshButtonListeners();
+        playFadeInOut = false;
+        playFullOpaque = true;
+        ResetUnselected();
 
-        foreach (GameObject obj in addedObjs) {
-            if (obj != null) {
-                SpriteRenderer sprite = obj.GetComponent<SpriteRenderer>();
-                if (sprite != null) {
-                    LastColorUnableObjects(obj, sprite.sprite, previousColor);
-                    moveWhenPanelStartedManager.isStartMove = false;
-                    moveWhenPanelStartedManager.isMoveToFirst = true;
-                    playfunctionTransparenty = true;
-                    FullTransparenty();
-                }
+        foreach (var obj in addedObjs) {
+            if (obj.TryGetComponent<SpriteRenderer>(out var sr)) {
+                sr.color = previousColor;
+                sr.sprite = previousSprite;
             }
         }
 
-        playfunction = false;
-        OnableObjsTransparenty();
-        if (scrollBarMenu != null) {
-            scrollBarMenu.SetActive(false);
-        }
-        isToggled = false;
+        moveManager.isStartMove = false;
+        moveManager.isMoveToFirst = true;
     }
+
     public void OnclickObjectsMenu(Button sender) {
         clickedButton = sender;
         btnItems = sender;
 
-        GameObject gameObject = btnItems.gameObject;
-        Image imageGameObj = gameObject.GetComponent<Image>();
-        currentColor = imageGameObj.color;
-        currentSprite = imageGameObj.sprite;
-
-        SaveCurrentState();
-
-        // مقداردهی مجدد دکمه‌ها
-
-        foreach (GameObject obj in addedObjs) {
-            if (obj != null) {
-                SpriteRenderer sprite = obj.GetComponent<SpriteRenderer>();
-                if (sprite != null) {
-                    sprite.color = currentColor;
-                    sprite.sprite = currentSprite;
-                }
-            }
+        GameObject go = btnItems.gameObject;
+        if (go.TryGetComponent<Image>(out var image)) {
+   
         }
-        RefreshButtonListeners();
-    }
 
-
-    private void FullTransparenty() {
-        // حلقه‌ای برای عبور از تمام آبجکت‌ها در لیست
-        foreach (GameObject obj in addedObjs) {
-            if (obj != null) {
-                SpriteRenderer sprite = obj.GetComponent<SpriteRenderer>();
-                if (sprite != null) {
-                    Color color = sprite.color;
-                    color.a += fadeSpeed * Time.deltaTime;
-                    if (color.a >= 1f) { // مقدار 1f معادل شفافیت 255 است
-                        color.a = 1f;
-                    }
-                    // اعمال مقدار جدید به رنگ
-                    sprite.color = color;
-                }
+        foreach (var obj in addedObjs) {
+            if (obj.TryGetComponent<SpriteRenderer>(out var sr)) {
+                sr.color = image.color;
+                sr.sprite = image.sprite;
             }
         }
     }
-    private void LastColorUnableObjects(GameObject objs, Sprite spriteMain, Color color) {
-        SpriteRenderer sprite = objs.GetComponent<SpriteRenderer>();
-        if (sprite != null) {
-            sprite.color = color;
-        }
-        if (sprite.sprite != null) {
-            sprite.sprite = spriteMain;
-        }
+
+    private void SaveColor(string key, Color color) => PlayerPrefs.SetString(key, $"{color.r},{color.g},{color.b},{color.a}");
+    private Color LoadColor(string key, Color fallback) {
+        if (!PlayerPrefs.HasKey(key)) return fallback;
+        var parts = PlayerPrefs.GetString(key).Split(',');
+        return new Color(float.Parse(parts[0]), float.Parse(parts[1]), float.Parse(parts[2]), float.Parse(parts[3]));
     }
 
-    private void SaveColorUnableObjects(GameObject objs, Sprite spriteMain, Color color) {
-        SpriteRenderer sprite = objs.GetComponent<SpriteRenderer>();
-        if (sprite != null) {
-            sprite.color = color;
-        }
-        if (sprite.sprite != null) {
-            sprite.sprite = spriteMain;
-        }
-    }
     private void SaveSprite(string key, Sprite sprite) {
-        if (sprite != null) {
-            PlayerPrefs.SetString(key, sprite.name);
-            PlayerPrefs.Save();
-        }
+        if (sprite != null) PlayerPrefs.SetString(key, sprite.name);
     }
-
-    private Sprite LoadSprite(string key, Sprite defaultSprite) {
-        if (PlayerPrefs.HasKey(key)) {
-            string spriteName = PlayerPrefs.GetString(key);
-            Sprite loadedSprite = Resources.Load<Sprite>(spriteName);
-
-            if (loadedSprite != null) {
-                return loadedSprite; // مقدار صحیح لود شد
-            }
-        }
-        return defaultSprite; // مقدار قبلی حفظ شود
-    }
-
-    private void SaveColor(string key, Color color) {
-        string colorString = $"{color.r},{color.g},{color.b},{color.a}"; // تبدیل به رشته
-        PlayerPrefs.SetString(key, colorString);
-        PlayerPrefs.Save();
-    }
-
-    private Color LoadColor(string key, Color defaultColor) {
-        if (PlayerPrefs.HasKey(key)) {
-            string[] rgba = PlayerPrefs.GetString(key).Split(',');
-            return new Color(
-                float.Parse(rgba[0]),
-                float.Parse(rgba[1]),
-                float.Parse(rgba[2]),
-                float.Parse(rgba[3])
-            );
-        }
-        return defaultColor;
-    }
-
-    private void SaveCurrentState() {
-        SaveColor(currentColorKey, currentColor);
-        SaveColor(previousColorKey, previousColor);
-
-        SaveSprite(currentSpriteKey, currentSprite);
-        SaveSprite(previousSpriteKey, previousSprite);
+    private Sprite LoadSprite(string key, Sprite fallback) {
+        if (!PlayerPrefs.HasKey(key)) return fallback;
+        var name = PlayerPrefs.GetString(key);
+        return Resources.Load<Sprite>(name) ?? fallback;
     }
 
     [System.Serializable]

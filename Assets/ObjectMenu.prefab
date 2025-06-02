@@ -123,7 +123,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 5439543506841796159}
         m_TargetAssemblyTypeName: ObjectMenuAdderClick, Assembly-CSharp
-        m_MethodName: OnclickObjectsMenu
+        m_MethodName: OnItemsClick
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -149,3 +149,4 @@ MonoBehaviour:
   btnNotCorrect: {fileID: 0}
   btnItems: {fileID: 3567141090215357785}
   addedAndChangeScriptMenu: {fileID: 0}
+  addedAndChangeScriptMenu2: {fileID: 0}
