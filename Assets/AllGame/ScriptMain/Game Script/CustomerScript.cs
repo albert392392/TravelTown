@@ -170,11 +170,11 @@ public class CustomerScript : MonoBehaviour
         {
             float progress = jumpTween.ElapsedPercentage();
             if (progress < 0.5f) {
-                float scaleFactor = Mathf.Lerp(1f, 0.8f, progress * 2); // فقط 10٪ بزرگ‌تر
+                float scaleFactor = Mathf.Lerp(0.7f, 0.3f, progress * 2);
                 money.transform.localScale = Vector3.one * scaleFactor;
             }
             else {
-                float scaleFactor = Mathf.Lerp(1.1f, 0.4f, (progress - 0.5f) * 2); // سپس کوچیک‌تر به 90٪
+                float scaleFactor = Mathf.Lerp(0.8f, 0.1f, (progress - 0.5f) * 2);
                 money.transform.localScale = Vector3.one * scaleFactor;
             }
         });
