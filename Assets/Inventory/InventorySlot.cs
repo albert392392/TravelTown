@@ -8,7 +8,7 @@ public class InventorySlot : MonoBehaviour
     private TextMeshProUGUI textMeshPro;
     private Button button;
     public GameObject GameObjectIn;
-
+    public bool IsPaidStage;
     public InventoryManager inventoryManager;
 
     private void Awake() {

@@ -229,6 +229,20 @@ public class ObjectMerge : MergeableBase {
 
         return false;
     }
+    public void In_inventory() {
+        if (inventoryItemDragHandler != null && gameObject != null && inventoryItemDragHandler.inventoryManager.isInventoryEnabled) {
+            if (!inventoryItemDragHandler.inventoryManager.inventorySlots.Contains(gameObject)) {
+                inventoryItemDragHandler.inventoryManager.inventorySlots.Add(gameObject);
+            }
+            // Set parent without changing local scale
+            originalScale = gameObject.transform.localScale;
+            gameObject.transform.SetParent(inventoryItemDragHandler.inventoryManager.mergeableParent.transform, false);
+            gameObject.transform.localScale = originalScale;
+            gameObject.GetComponent<Collider>().enabled = false;
+            gameObject.SetActive(false);
+            UIManager.Instance.chooseOver.SetActive(false);
+        }
+    }
     private void MainDeletePanelSell() {
         UIManager.Instance.PlaceSpritePanel.sprite = PlaceSpritePanel;
         UIManager.Instance.placeTextLevel.text = AddTextLevel;
