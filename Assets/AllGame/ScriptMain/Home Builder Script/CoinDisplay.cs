@@ -2,6 +2,8 @@
 using UnityEngine;
 
 public class CoinDisplay : MonoBehaviour {
+    public static CoinDisplay Instance { get; private set; } // Singleton instance
+
     public TextMeshProUGUI moneyText; // رفرنس به عنصر متنی برای نمایش سکه‌ها
 
     private void Start() {

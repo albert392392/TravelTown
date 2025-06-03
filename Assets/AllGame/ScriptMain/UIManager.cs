@@ -37,7 +37,8 @@ public class UIManager : MonoBehaviour {
     [SerializeField] private string nextCustomerIndexSave;
     [SerializeField] private string waveIndexSave;
     public GameObject chooseOver;
-
+    public GameObject MoneyCustomer;
+    public Transform coinTransform;
     private void Awake() {
         if (ButtinPinSpider == null) {
             Debug.LogError("ButtinPinSpider is not assigned in UIManager.");
@@ -65,8 +66,6 @@ public class UIManager : MonoBehaviour {
             waveHolders[i].SpawnInitialCustomers(CustomerSetParent.transform); // ✅ اصلاح‌شده
         }
     }
-
-
     public void SetCurrentSpider(SpiderScript spider) {
         spiderScript = spider;
         ButtinPinSpider.interactable = true;
@@ -140,7 +139,6 @@ public class UIManager : MonoBehaviour {
     }
     public void CheckWave(CustomerScript customer) {
         if (customer.EndOrders) {
-            Destroy(customer.gameObject);
             waveHolders[waveIndex].OnCustomerRemoved(CustomerSetParent.transform, waveIndex, customer);
 
             if (waveHolders[waveIndex]._customerList.Count == 0) {
@@ -204,7 +202,7 @@ public class UIManager : MonoBehaviour {
 
                 var customer = GameObject.Instantiate(holder.customer, spawnPoint.position, spawnPoint.rotation);
                 customer.CustomerId = holder.id;
-                customer.transform.SetParent(spawnPoint);
+                customer.transform.SetParent(spawnPoint ,false);
                 customer.coinValue = holder.data.CoinValue;
                 customer.CustomerCoinText.text = holder.data.CoinValue.ToString();
 
@@ -264,8 +262,9 @@ public class UIManager : MonoBehaviour {
 
             foreach (var customerData in data.activeCustomers) {
                 if (idToHolder.TryGetValue(customerData.id, out var holder)) {
-                    var customer = GameObject.Instantiate(holder.customer, customerData.position, customerData.rotation, UIManager.Instance.CustomerSetParent);
-                    customer.transform.localScale = Vector3.one; // Ensure correct scale
+                    var customer = GameObject.Instantiate(holder.customer, customerData.position, customerData.rotation);
+                    customer.transform.SetParent(UIManager.Instance.CustomerSetParent,false);
+                    //customer.transform.localScale = Vector3.one; // Ensure correct scale
                     customer.CustomerId = holder.id;
                     customer.coinValue = holder.data.CoinValue;
                     customer.CustomerCoinText.text = holder.data.CoinValue.ToString();

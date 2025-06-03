@@ -5,7 +5,6 @@ using TMPro;
 using Unity.VisualScripting;
 using UnityEditor;
 using UnityEngine;
-
 public enum MergeableState {
     Idle,
     Dragging,
@@ -427,7 +426,34 @@ public abstract class MergeableBase : MonoBehaviour
             UpdateChooseOver(transform.parent);
         });
     }
+    public IEnumerator CustomerPaidObjectIEnum(CustomerScript customer) {
+        transform.SetParent(null);
+        GetComponent<Collider>().enabled = false;
+        GetComponent<MergeableBase>().enabled = false;
+        Tween jumpTween = transform.DOJump(customer.papper.transform.position, 1f, 1, 0.5f)
+            .SetEase(Ease.OutQuad);
 
+        jumpTween.OnUpdate(() =>
+        {
+            float progress = jumpTween.ElapsedPercentage();
+            if (progress < 0.5f)
+            {
+                float scaleFactor = Mathf.Lerp(1f, 1.2f, progress * 2); // Scale up slightly
+                transform.localScale = Vector3.one * scaleFactor;
+            }
+            else
+            {
+                float scaleFactor = Mathf.Lerp(1.2f, 0.8f, (progress - 0.5f) * 2); // Scale down
+                transform.localScale = Vector3.one * scaleFactor;
+            }
+        });
+        jumpTween.OnComplete(() =>
+        {
+            Destroy(gameObject);
+        });
+
+        yield return jumpTween.WaitForCompletion();
+    }
     public void In_inventory()
     {
         if (inventoryItemDragHandler != null && gameObject != null && inventoryItemDragHandler.inventoryManager.isInventoryEnabled) {

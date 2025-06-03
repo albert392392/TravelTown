@@ -61,6 +61,7 @@ public class ObjectMerge : MergeableBase {
                 break;
         }
     }
+
     private void OnTouchBegin(Vector3 position) {
         if (ObjectDragManager.Instance.IsDraggingSomething())
             return;

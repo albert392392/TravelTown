@@ -1,8 +1,10 @@
-﻿using UnityEngine;
-using UnityEngine.UI;
+﻿using DG.Tweening;
+using System.Collections;
 using System.Collections.Generic;
-using TMPro;
 using System.Text.RegularExpressions;
+using TMPro;
+using UnityEngine;
+using UnityEngine.UI;
 
 public class CustomerScript : MonoBehaviour
 {
@@ -18,9 +20,10 @@ public class CustomerScript : MonoBehaviour
     public bool EndOrders { get; private set; }
     private bool matchFound;
     public string CustomerId { get; set; }
-
+    [SerializeField] private GameObject _MoneyCustomer;
     private void Start()
     {
+        _MoneyCustomer = UIManager.Instance.MoneyCustomer;
         // Initialize cachedObjectMerges with all MergeableBase objects in the scene
         cachedObjectMerges.AddRange(FindObjectsOfType<MergeableBase>());
         CustomerButton.interactable = false;
@@ -146,12 +149,45 @@ public class CustomerScript : MonoBehaviour
         Match match = Regex.Match(text, @"\d+");
         return match.Success ? int.Parse(match.Value) : -1; // Return -1 if no number is found
     }
-
-    private void OnCustomerButtonClick()
+    public void OnCustomerButtonClick() {
+        StartCoroutine(OnCustomerButtonClickIEnum());
+    }
+    private IEnumerator OnCustomerButtonClickIEnum()
     {
-        CoinManager.Instance.AddCoins(coinValue);
+       
         UIManager.Instance.chooseOver.SetActive(false);
-        foreach (var objectMerge in objectMerged) Destroy(objectMerge.gameObject);
+        foreach (var objectMerge in objectMerged)
+        {
+             StartCoroutine(objectMerge.CustomerPaidObjectIEnum(this));
+        }
+        
+        GameObject money = UIManager.Instance.MoneyCustomer;
+        money.transform.position = CustomerCoinText.transform.position;
+        money.SetActive(true);
+        Tween jumpTween = money.transform.DOJump(UIManager.Instance.coinTransform.transform.position, 1f, 1, 1f)
+          .SetEase(Ease.OutQuad);
+        jumpTween.OnUpdate(() =>
+        {
+            float progress = jumpTween.ElapsedPercentage();
+            if (progress < 0.5f) {
+                float scaleFactor = Mathf.Lerp(1f, 0.8f, progress * 2); // فقط 10٪ بزرگ‌تر
+                money.transform.localScale = Vector3.one * scaleFactor;
+            }
+            else {
+                float scaleFactor = Mathf.Lerp(1.1f, 0.4f, (progress - 0.5f) * 2); // سپس کوچیک‌تر به 90٪
+                money.transform.localScale = Vector3.one * scaleFactor;
+            }
+        });
+
+        jumpTween.OnComplete(() => {
+            money.SetActive(false);
+        });
+        yield return jumpTween.WaitForCompletion();
+
+
+        CoinManager.Instance.AddCoins(coinValue);
+        Destroy(gameObject);
+
         EndOrders = true;
         UIManager.Instance.CheckWave(this);
     }
