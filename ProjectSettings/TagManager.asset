@@ -17,6 +17,7 @@ TagManager:
   - TargetPosition
   - choosePanel4
   - inventory
+  - DiamondPrice
   layers:
   - Default
   - TransparentFX

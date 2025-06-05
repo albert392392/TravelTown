@@ -28,7 +28,7 @@ public class InventoryItemDragHandler : MonoBehaviour
                 item.SetActive(false);
             }
         }
-        inventoryManager.InventorySlotInformation();
+        inventoryManager.UpdateInventorySlotInformation();
     }
     public void OnGameObj() {
         if (gameObjectOff != null && gameObjectOff.Count > 0) {

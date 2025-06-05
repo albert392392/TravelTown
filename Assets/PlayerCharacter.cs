@@ -83,6 +83,7 @@ public class PlayerCharacter : MonoBehaviour {
     }
     private void OnTouchEnd(Touch touch) {
         isDragging = false;
+        SavePositionAndScale();
     }
 
     private bool IsTouchingCharacter(Vector3 position) {
@@ -116,6 +117,7 @@ public class PlayerCharacter : MonoBehaviour {
 
             PlayerPrefs.SetString(PositionAndScaleSaveKey, data);
             PlayerPrefs.Save();
+
         }
         Debug.Log("SavePositionAndScale");
     }

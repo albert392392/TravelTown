@@ -121,7 +121,7 @@ public class ObjectMerge : MergeableBase {
         transform.DOScale(originalScale, 0.2f);
 
         float distance = Vector3.Distance(touch.position, touchStartPosition);
-
+   
         // لمس بدون کشیدن
         if (distance < dragThreshold) {
             ReturnToOriginalPosition();
@@ -159,7 +159,7 @@ public class ObjectMerge : MergeableBase {
             return;
         }
 
-        if(inventoryItemDragHandler != null) {
+        if (inventoryItemDragHandler != null) {
             In_inventory();
         }
         // در نهایت بازگشت
@@ -228,20 +228,6 @@ public class ObjectMerge : MergeableBase {
         }
 
         return false;
-    }
-    public void In_inventory() {
-        if (inventoryItemDragHandler != null && gameObject != null && inventoryItemDragHandler.inventoryManager.isInventoryEnabled) {
-            if (!inventoryItemDragHandler.inventoryManager.inventorySlots.Contains(gameObject)) {
-                inventoryItemDragHandler.inventoryManager.inventorySlots.Add(gameObject);
-            }
-            // Set parent without changing local scale
-            originalScale = gameObject.transform.localScale;
-            gameObject.transform.SetParent(inventoryItemDragHandler.inventoryManager.mergeableParent.transform, false);
-            gameObject.transform.localScale = originalScale;
-            gameObject.GetComponent<Collider>().enabled = false;
-            gameObject.SetActive(false);
-            UIManager.Instance.chooseOver.SetActive(false);
-        }
     }
     private void MainDeletePanelSell() {
         UIManager.Instance.PlaceSpritePanel.sprite = PlaceSpritePanel;

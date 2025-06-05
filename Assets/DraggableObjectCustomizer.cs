@@ -105,6 +105,7 @@ public class DraggableObjectCustomizer : MonoBehaviour {
     private void OnTouchEnd(Touch touch) {
         isDragging = false;
         GetComponent<AddedAndChangeScriptMenu>().isDraggingFromCustomizer = false;
+        SavePositionAndScale();
     }
     private bool IsTouchingCharacter(Vector3 position) {
         Collider2D[] hitColliders = Physics2D.OverlapPointAll(position);
