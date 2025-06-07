@@ -457,7 +457,7 @@ public abstract class MergeableBase : MonoBehaviour
 
     public void In_inventory() {
         if (!inventoryItemDragHandler.inventoryManager.isInventoryEnabled) {
-            inventoryItemDragHandler.inventoryManager.UpdateInventorySlotInformation();
+           // inventoryItemDragHandler.inventoryManager.UpdateInventorySlotInformation();
             inventoryItemDragHandler.inventoryManager.ShowPanel();
             return;
         }

@@ -2,6 +2,8 @@ using NUnit.Framework;
 using UnityEngine;
 using System.Collections.Generic;
 using UnityEngine.UI;
+using Unity.VisualScripting;
+using System.Linq;
 public class InventoryItemDragHandler : MonoBehaviour
 {
     public static InventoryItemDragHandler Instance { get; private set; }
@@ -15,7 +17,7 @@ public class InventoryItemDragHandler : MonoBehaviour
     public Button buttonBack;
     private void Start() {
         button = GetComponent<Button>();
-        OnGameObj();
+        //OnGameObj();
         button.onClick.AddListener(OffGameObj);
         buttonBack.onClick.AddListener(OnGameObj);
     }
@@ -31,14 +33,14 @@ public class InventoryItemDragHandler : MonoBehaviour
         inventoryManager.UpdateInventorySlotInformation();
     }
     public void OnGameObj() {
+        if (inventoryManager != null) {
+            inventoryManager.transform.GetChild(0).gameObject.SetActive(false);
+        }
         if (gameObjectOff != null && gameObjectOff.Count > 0) {
             foreach (var item in gameObjectOff) {
                 item.SetActive(true);
             }
         }
-        if (inventoryManager != null) {
-            inventoryManager.transform.GetChild(0).gameObject.SetActive(false);
-        }
+        inventoryManager.UpdateInventorySlotInformation();
     }
-
 }

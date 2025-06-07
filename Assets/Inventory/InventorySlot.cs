@@ -4,15 +4,17 @@ using UnityEngine.UI;
 
 public class InventorySlot : MonoBehaviour
 {
+    public static InventorySlot Instance { get; private set; }
     public Image image;
     private TextMeshProUGUI textMeshPro;
     private Button button;
     public GameObject GameObjectIn;
     public bool IsPaidStage;
+    public bool IsClickOnBtn;
     public InventoryManager inventoryManager;
-
     private void Awake() {
-        if(button == null)
+        GetComponent<InventorySlot>().enabled = true;
+        if (button == null)
             button = GetComponent<Button>();
         if (image == null)
             image = GetComponent<Image>();

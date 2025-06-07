@@ -1,5 +1,6 @@
 ﻿using NUnit;
 using NUnit.Framework;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,12 +15,14 @@ public class InventoryManager : MonoBehaviour {
     public int countPaidStage;
     public InventoryFull inventoryFullPanel;
 
-    private void Start() {
+    private IEnumerator Start() {
         if (inventoryFullPanel != null && inventoryFullPanel.PanelFull != null) {
             inventoryFullPanel.PanelFull.SetActive(false);
         }
+        yield return null; // Wait one frame
+        yield return null;
+        InitializeInventory();
     }
-
     private void Update() {
         UpdateInventoryState();
     }
@@ -28,85 +31,90 @@ public class InventoryManager : MonoBehaviour {
         isInventoryEnabled = inventorySlots.Count != inventoryItems.Count - countPaidStage;
     }
 
+    public void InitializeInventory() {
+        // Ensure all InventoryPaid scripts are loaded and IsPaidStage is up-to-date
+        foreach (var item in inventoryItems) {
+            var paid = item.GetComponent<InventoryPaid>();
+            if (paid != null)
+                paid.InitAndLoad();
+        }
+        UpdateInventorySlotInformation();
+    }
     public void UpdateInventorySlotInformation()
     {
-        // Reset countPaidStage
+
         countPaidStage = inventoryItems.Count(item =>
         {
             var slot = item.GetComponent<InventorySlot>();
             return slot != null && slot.IsPaidStage;
         });
 
-        // Update inventory panel data
-        if (inventoryFullPanel != null)
-        {
+        if (inventoryFullPanel != null) {
             inventoryFullPanel.countInventoryPriceInt = countPaidStage;
-            inventoryFullPanel.number_InventoryDescriptionInt = new List<int>();
 
-            foreach (var item in inventoryItems)
-            {
+            List<string> diamondValues = new List<string>();
+
+            foreach (var item in inventoryItems) {
                 var inventorySlot = item.GetComponent<InventorySlot>();
                 var inventoryPaid = item.GetComponent<InventoryPaid>();
 
-                if (inventorySlot != null && inventorySlot.IsPaidStage && inventoryPaid != null)
-                {
+                if (inventorySlot != null && inventorySlot.IsPaidStage && inventoryPaid != null) {
                     var diamondText = inventoryPaid.text;
-                    if (diamondText != null && item.CompareTag("DiamondPrice"))
-                    {
-                        if (int.TryParse(diamondText.text, out int diamondValue))
-                        {
-                            inventoryFullPanel.number_InventoryDescriptionInt.Add(diamondValue);
+                    if (diamondText != null) {
+                        if (int.TryParse(diamondText.text, out int diamondValue)) {
+                            diamondValues.Add(diamondValue.ToString());
                         }
-                        else
-                        {
+                        else {
                             Debug.LogWarning("Failed to parse diamond value from text: " + diamondText.text);
                         }
                     }
                 }
-                else
-                {
-                    Debug.LogWarning("Item is not a paid stage or missing InventoryPaid component: " + item.name);
-                }
             }
 
-            // Update the number_InventoryDescription field to show the sum of all diamond values
-            if (inventoryFullPanel.number_InventoryDescription != null)
-            {
-                int totalDiamondValue = inventoryFullPanel.number_InventoryDescriptionInt.Sum();
-                inventoryFullPanel.number_InventoryDescription.text = totalDiamondValue.ToString();
+            // مقدار نهایی به صورت رشته‌ای با + بین مقادیر
+            if (inventoryFullPanel.number_InventoryDescription != null) {
+                inventoryFullPanel.number_InventoryDescription.text = string.Join("+", diamondValues);
             }
-
-            Debug.Log("Updated number_InventoryDescriptionInt: " + string.Join(", ", inventoryFullPanel.number_InventoryDescriptionInt));
         }
 
+        var unpaidItems = inventoryItems
+            .Where(item => { var slot = item.GetComponent<InventorySlot>();return slot != null&& !slot.IsPaidStage; })
+            .ToList();
+
         // Update inventory slots
-        int availableSlots = Mathf.Min(inventorySlots.Count, inventoryItems.Count - countPaidStage);
+        int availableSlots = Mathf.Min(inventorySlots.Count,unpaidItems.Count);
 
         for (int i = 0; i < availableSlots; i++)
         {
-            var slotRenderer = inventorySlots[i]?.GetComponent<SpriteRenderer>();
-            var slotText = inventorySlots[i]?.GetComponentInChildren<TextMeshPro>();
-            var itemSlot = inventoryItems[i]?.GetComponent<InventorySlot>();
+            var slot = unpaidItems[i].GetComponent<InventorySlot>();
 
-            if (slotRenderer != null && itemSlot != null)
-            {
-                itemSlot.ChangeImage(slotRenderer.sprite, slotRenderer.color, slotText);
-                itemSlot.GameObjectIn = inventorySlots[i];
-                itemSlot.inventoryManager = this;
+            if (i < unpaidItems.Count) {
+
+                var slotRenderer = inventorySlots[i]?.GetComponent<SpriteRenderer>();
+                var slotText = inventorySlots[i]?.GetComponentInChildren<TextMeshPro>();
+                var itemSlot = unpaidItems[i]?.GetComponent<InventorySlot>();
+
+                if (slotRenderer != null && itemSlot != null) {
+                    itemSlot.ChangeImage(slotRenderer.sprite, slotRenderer.color, slotText);
+                    itemSlot.GameObjectIn = inventorySlots[i];
+                    itemSlot.inventoryManager = this;
+                }
             }
+            else if(slot != null) {
+                slot.BackObjectInScreen();
+            }
+
         }
     }
     public void ShowPanel() {
         if(inventoryFullPanel != null) {
             inventoryFullPanel.ShowPanel();
-            Debug.Log("Panel shown with values: " + string.Join(", ", inventoryFullPanel.number_InventoryDescriptionInt));
         }
     }
     [System.Serializable]
     public class InventoryFull {
         public GameObject PanelFull;
         public int countInventoryPriceInt;
-        public List<int> number_InventoryDescriptionInt = new List<int>();
         public TextMeshProUGUI countInventoryPrice;
         public TextMeshProUGUI number_InventoryDescription;
 
@@ -119,11 +127,7 @@ public class InventoryManager : MonoBehaviour {
             if (countInventoryPrice != null) {
                 countInventoryPrice.text = countInventoryPriceInt.ToString();
             }
-
-            if (number_InventoryDescription != null) {
-                number_InventoryDescription.text = string.Join("+", number_InventoryDescriptionInt) + "+";
-            }
-
+            
             if (PanelFull != null) {
                 PanelFull.GetComponent<MonoBehaviour>().StartCoroutine(TimerDeactivatePanel());
             }
